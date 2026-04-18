@@ -53,11 +53,11 @@ export default function FAQ() {
   ]
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-[#170625]">
+    <section ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h2
-          className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] text-center mb-16 transition-all duration-1000 ${
+          className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] text-center mb-16 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
@@ -75,9 +75,9 @@ export default function FAQ() {
             >
               <button
                 onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
-                className="w-full flex items-center justify-between p-6 hover:bg-[#0F1520]/50 transition-colors duration-300 group"
+                className="w-full flex items-center justify-between p-6 hover:bg-[#9D5088]/50 transition-colors duration-300 group"
               >
-                <h3 className="font-lato text-[#FEFBF4] text-left text-lg group-hover:text-[#AE8F56] transition-colors">
+                <h3 className="font-lato text-[#000000] text-left text-lg group-hover:text-[#FFFFFF] transition-colors">
                   {faq.question}
                 </h3>
                 <svg
@@ -95,7 +95,7 @@ export default function FAQ() {
               {/* Answer */}
               {expandedIdx === idx && (
                 <div className="px-6 pb-6 border-t border-[#AE8F56]/20 animate-fadeInUp">
-                  <p className="text-[#706E6B] font-lato leading-relaxed">{faq.answer}</p>
+                  <p className="text-[#000000] font-lato leading-relaxed">{faq.answer}</p>
                 </div>
               )}
             </div>

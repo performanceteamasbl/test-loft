@@ -24,19 +24,19 @@ export default function FloorPlans() {
   }, [])
 
   return (
-    <section id="floor-plans" ref={ref} className="py-24 px-6 bg-[#0F1520]">
+    <section id="floor-plans" ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
       <div className="max-w-6xl mx-auto">
         {/* Heading */}
         <div className="mb-16 text-center">
           <h2
-            className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] mb-4 transition-all duration-1000 ${
+            className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] mb-4 transition-all duration-1000 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
             Thoughtfully Designed 3BHK Layouts
           </h2>
           <p
-            className={`text-[#706E6B] font-lato text-lg leading-relaxed max-w-3xl mx-auto transition-all duration-1000 delay-200 ${
+            className={`text-[#000000] font-lato text-lg leading-relaxed max-w-3xl mx-auto transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
@@ -57,7 +57,7 @@ export default function FloorPlans() {
               }`}
             >
               {/* Image Placeholder */}
-              <div className="h-96 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
+              <div className="h-96 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
                 <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Floor Plan — {plan.size}</p>
               </div>
 
@@ -66,7 +66,7 @@ export default function FloorPlans() {
                 <h3 className="font-montserrat uppercase text-[#AE8F56] text-sm tracking-wide mb-2">
                   {plan.type}
                 </h3>
-                <p className="font-cormorant italic text-2xl text-[#FEFBF4]">{plan.size}</p>
+                <p className="font-cormorant italic text-2xl text-[#000000]">{plan.size}</p>
               </div>
             </div>
           ))}

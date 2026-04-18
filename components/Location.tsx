@@ -31,14 +31,14 @@ export default function Location() {
   ]
 
   return (
-    <section id="location" ref={ref} className="py-24 px-6 bg-[#170625]">
+    <section id="location" ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
       <div className="max-w-6xl mx-auto">
         {/* Main Content */}
         <div className="grid md:grid-cols-2 gap-12 mb-16 items-start">
           {/* Text Content */}
           <div>
             <h2
-              className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] mb-6 transition-all duration-1000 ${
+              className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] mb-6 transition-all duration-1000 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -52,7 +52,7 @@ export default function Location() {
               Premium 3BHK flats in the heart of Financial District
             </h3>
             <p
-              className={`text-[#706E6B] font-lato text-lg leading-relaxed mb-8 transition-all duration-1000 delay-300 ${
+              className={`text-[#000000] font-lato text-lg leading-relaxed mb-8 transition-all duration-1000 delay-300 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -62,7 +62,7 @@ export default function Location() {
 
           {/* Map Placeholder */}
           <div
-            className={`h-96 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
+            className={`h-96 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
               isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
           >
@@ -84,13 +84,13 @@ export default function Location() {
                 }`}
               >
                 {/* Feature Image Placeholder */}
-                <div className="h-48 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border border-[#AE8F56]/20 flex items-center justify-center mb-4 group-hover:border-[#AE8F56]/40 transition-colors duration-300">
+                <div className="h-48 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border border-[#AE8F56]/20 flex items-center justify-center mb-4 group-hover:border-[#AE8F56]/40 transition-colors duration-300">
                   <p className="text-[#AE8F56]/40 italic font-cormorant text-sm">{feature.title}</p>
                 </div>
-                <h4 className="font-montserrat uppercase text-[#FEFBF4] text-sm tracking-wide mb-3">
+                <h4 className="font-montserrat uppercase text-[#000000] text-sm tracking-wide mb-3">
                   {feature.title}
                 </h4>
-                <p className="text-[#706E6B] font-lato text-sm">{feature.desc}</p>
+                <p className="text-[#000000] font-lato text-sm">{feature.desc}</p>
               </div>
             ))}
           </div>

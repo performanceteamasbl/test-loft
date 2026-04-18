@@ -24,16 +24,16 @@ export default function About() {
   }, [])
 
   return (
-    <section id="about" ref={ref} className="py-24 px-6 bg-[#0F1520] relative">
+    <section id="about" ref={ref} className="py-24 px-6 bg-[#FFFFFF] relative">
       <div className="max-w-6xl mx-auto">
         {/* Section Label */}
         <div className="mb-16 flex items-start gap-8">
-          <div className="text-[#706E6B] font-montserrat text-sm uppercase tracking-wider opacity-60">
+          <div className="text-[#000000] font-montserrat text-sm uppercase tracking-wider opacity-60">
             01 / ABOUT
           </div>
           <div className="flex-1">
             <h2
-              className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] mb-8 transition-all duration-1000 ${
+              className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] mb-8 transition-all duration-1000 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -41,7 +41,7 @@ export default function About() {
             </h2>
 
             {/* Content */}
-            <div className="space-y-6 font-lato text-[#706E6B] text-lg leading-relaxed mb-12">
+            <div className="space-y-6 font-lato text-[#000000] text-lg leading-relaxed mb-12">
               <p
                 className={`transition-all duration-1000 delay-200 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
@@ -60,7 +60,7 @@ export default function About() {
 
             {/* Image Placeholder */}
             <div
-              className={`mb-12 h-96 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
+              className={`mb-12 h-96 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
                 isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
@@ -77,7 +77,7 @@ export default function About() {
               ].map((stat, idx) => (
                 <div key={idx} className={`flex-1 min-w-[150px] transition-all duration-1000 ${isVisible ? `opacity-100 translate-y-0 ${stat.delay}` : 'opacity-0 translate-y-5'}`}>
                   <p className="font-montserrat text-sm uppercase tracking-wider text-[#AE8F56] mb-2">·</p>
-                  <p className="font-lato text-[#FEFBF4]">{stat.label}</p>
+                  <p className="font-lato text-[#000000]">{stat.label}</p>
                 </div>
               ))}
             </div>

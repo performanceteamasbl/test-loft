@@ -24,7 +24,7 @@ export default function PaymentPlan() {
   }, [])
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-[#170625] relative overflow-hidden">
+    <section ref={ref} className="py-24 px-6 bg-[#FFFFFF] relative overflow-hidden">
       {/* Subtle geometric pattern overlay */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 right-10 w-40 h-40 border border-[#AE8F56] rotate-45"></div>
@@ -34,13 +34,13 @@ export default function PaymentPlan() {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Heading */}
         <h2
-          className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] text-center mb-4 transition-all duration-1000 ${
+          className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] text-center mb-4 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
           The 25–75 Payment Plan
         </h2>
-        <p className="text-center text-[#706E6B] font-montserrat text-sm uppercase tracking-wider mb-16">
+        <p className="text-center text-[#000000] font-montserrat text-sm uppercase tracking-wider mb-16">
           Flexible & Easy Financing Options
         </p>
 
@@ -60,14 +60,14 @@ export default function PaymentPlan() {
               >
                 {/* Step Circle */}
                 <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-[#AE8F56] flex items-center justify-center font-cormorant italic text-2xl text-[#0F1520] border-4 border-[#0F1520]">
+                  <div className="w-16 h-16 rounded-full bg-[#AE8F56] flex items-center justify-center font-cormorant italic text-2xl text-[#9D5088] border-4 border-[#9D5088]">
                     {step.num}
                   </div>
                 </div>
                 <h3 className="font-montserrat uppercase text-[#AE8F56] text-sm tracking-wide mb-2">
                   {step.title}
                 </h3>
-                <p className="text-[#706E6B] font-lato text-sm">{step.desc}</p>
+                <p className="text-[#000000] font-lato text-sm">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -82,7 +82,7 @@ export default function PaymentPlan() {
 
         {/* Image Placeholder */}
         <div
-          className={`h-80 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-12 transition-all duration-1000 delay-500 ${
+          className={`h-80 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-12 transition-all duration-1000 delay-500 ${
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >

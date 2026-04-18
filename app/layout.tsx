@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="font-lato antialiased bg-[#0F1520] text-[#FEFBF4]">
+      <body className="font-lato antialiased bg-[#9D5088] text-[#FFFFFF]">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
