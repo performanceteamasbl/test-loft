@@ -1,6 +1,17 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
+import clubhouseImage from '../assets/Clubhouse-new.webp'
+import poolImage from '../assets/pool.webp'
+import gymImage from '../assets/gym.webp'
+import coworkingImage from '../assets/cowarking.webp'
+import crecheImage from '../assets/crache.webp'
+import badmintonImage from '../assets/badminton.webp'
+import guestroomImage from '../assets/guestroom.webp'
+import yogaImage from '../assets/yoga.webp'
+import partyHallImage from '../assets/partyhall.webp'
+import practicalLuxuryImage from '../assets/practicalluxury.webp'
 
 export default function Amenities() {
   const [isVisible, setIsVisible] = useState(false)
@@ -24,14 +35,16 @@ export default function Amenities() {
   }, [])
 
   const amenities = [
-    { icon: '🏛️', label: 'Clubhouse' },
-    { icon: '🏊', label: 'Swimming Pool' },
-    { icon: '💪', label: 'Gymnasium' },
-    { icon: '💼', label: 'Co-working Space' },
-    { icon: '🛒', label: 'Supermarket' },
-    { icon: '🎾', label: 'Indoor Sports' },
-    { icon: '🏨', label: 'Guest Suites' },
-    { icon: '👶', label: 'Childcare' },
+    { label: 'Clubhouse', image: clubhouseImage },
+    { label: 'Swimming Pool', image: poolImage },
+    { label: 'Gymnasium', image: gymImage },
+    { label: 'Co-working Space', image: coworkingImage },
+    { label: 'Creche', image: crecheImage },
+    { label: 'Badminton', image: badmintonImage },
+    { label: 'Guest Room', image: guestroomImage },
+    { label: 'Yoga Deck', image: yogaImage },
+    { label: 'Party Hall', image: partyHallImage },
+    { label: 'Practical Luxury', image: practicalLuxuryImage },
   ]
 
   return (
@@ -61,20 +74,20 @@ export default function Amenities() {
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Clubhouse / Amenities Aerial View</p>
+          <Image src={clubhouseImage} alt="Clubhouse / Amenities Aerial View" className="h-full w-full object-cover" />
         </div>
 
         {/* Amenities Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
           {amenities.map((amenity, idx) => (
             <div
               key={idx}
-              className={`group flex flex-col items-center gap-3 p-6 bg-[#9D5088] border border-[#AE8F56]/20 hover:border-[#AE8F56]/60 transition-all duration-300 text-center cursor-pointer transform duration-1000 ${
+              className={`group flex flex-col items-center gap-3 p-6 bg-[#FFFFFF] border border-[#AE8F56]/20 hover:border-[#AE8F56]/60 transition-all duration-300 text-center cursor-pointer transform duration-1000 ${
                 isVisible ? `opacity-100 translate-y-0 delay-${(idx + 4) * 50}` : 'opacity-0 translate-y-10'
               }`}
             >
-              <span className="text-4xl">{amenity.icon}</span>
-              <p className="font-montserrat text-sm uppercase tracking-wide text-[#FFFFFF] group-hover:text-[#AE8F56] transition-colors">
+              <Image src={amenity.image} alt={amenity.label} className="h-28 w-full object-cover" />
+              <p className="font-montserrat text-sm uppercase tracking-wide text-[#000000] group-hover:text-[#AE8F56] transition-colors">
                 {amenity.label}
               </p>
             </div>

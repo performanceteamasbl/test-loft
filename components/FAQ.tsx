@@ -75,13 +75,13 @@ export default function FAQ() {
             >
               <button
                 onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
-                className="w-full flex items-center justify-between p-6 hover:bg-[#9D5088]/50 transition-colors duration-300 group"
+                className="w-full flex items-center justify-between p-6 hover:bg-[#9D5088] transition-colors duration-300 group"
               >
                 <h3 className="font-lato text-[#000000] text-left text-lg group-hover:text-[#FFFFFF] transition-colors">
                   {faq.question}
                 </h3>
                 <svg
-                  className={`w-6 h-6 text-[#AE8F56] flex-shrink-0 ml-4 transition-transform duration-300 ${
+                  className={`w-6 h-6 text-[#AE8F56] group-hover:text-[#FFFFFF] flex-shrink-0 ml-4 transition-transform duration-300 ${
                     expandedIdx === idx ? 'rotate-180' : ''
                   }`}
                   fill="none"

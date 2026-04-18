@@ -102,7 +102,7 @@ export default function InterestForm() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                 placeholder="Your name"
               />
             </div>
@@ -118,7 +118,7 @@ export default function InterestForm() {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                 placeholder="+91 XXXXX XXXXX"
               />
             </div>
@@ -134,7 +134,7 @@ export default function InterestForm() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                 placeholder="your@email.com"
               />
             </div>
@@ -148,7 +148,7 @@ export default function InterestForm() {
                 name="preferredTime"
                 value={formData.preferredTime}
                 onChange={handleChange}
-                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
               >
                 <option value="morning">Morning (9 AM - 12 PM)</option>
                 <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
@@ -164,7 +164,7 @@ export default function InterestForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-[#AE8F56] text-[#9D5088] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+              className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isLoading ? 'Sending...' : 'Request a Callback'}
             </button>

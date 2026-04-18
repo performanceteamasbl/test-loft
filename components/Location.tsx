@@ -1,6 +1,12 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
+import loftlocation from '../assets/Loft-Nearby-Map.webp'
+import why1Image from '../assets/Why-1.webp'
+import why2Image from '../assets/Why-2.webp'
+import why3Image from '../assets/Why-3.webp'
+import why4Image from '../assets/Why-4.webp'
 
 export default function Location() {
   const [isVisible, setIsVisible] = useState(false)
@@ -24,10 +30,10 @@ export default function Location() {
   }, [])
 
   const features = [
-    { title: 'Favorite of IT Giants', desc: 'Proximity to Amazon, Microsoft, Wipro & other corporate hubs' },
-    { title: 'Connectivity Like Never Before', desc: 'Easy access to ORR, ISB Road, and Wipro Circle' },
-    { title: 'Great Infrastructure', desc: 'World-class amenities and seamless urban connectivity' },
-    { title: 'Best Investment Opportunity', desc: 'High appreciation potential in the prime Financial District' },
+    { title: 'Favorite of IT Giants', desc: 'Proximity to Amazon, Microsoft, Wipro & other corporate hubs', image: why1Image },
+    { title: 'Connectivity Like Never Before', desc: 'Easy access to ORR, ISB Road, and Wipro Circle', image: why2Image },
+    { title: 'Great Infrastructure', desc: 'World-class amenities and seamless urban connectivity', image: why3Image },
+    { title: 'Best Investment Opportunity', desc: 'High appreciation potential in the prime Financial District', image: why4Image },
   ]
 
   return (
@@ -61,12 +67,8 @@ export default function Location() {
           </div>
 
           {/* Map Placeholder */}
-          <div
-            className={`h-96 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
-              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-            }`}
-          >
-            <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Location Map / Aerial View</p>
+          <div className='h-full w-auto'>
+            <Image src={loftlocation} alt="Loft Location" className="h-full w-full object-cover" />
           </div>
         </div>
 
@@ -84,8 +86,8 @@ export default function Location() {
                 }`}
               >
                 {/* Feature Image Placeholder */}
-                <div className="h-48 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border border-[#AE8F56]/20 flex items-center justify-center mb-4 group-hover:border-[#AE8F56]/40 transition-colors duration-300">
-                  <p className="text-[#AE8F56]/40 italic font-cormorant text-sm">{feature.title}</p>
+                <div className="h-48 border border-[#AE8F56]/20 flex items-center justify-center mb-4 group-hover:border-[#AE8F56]/40 transition-colors duration-300 p-4">
+                  <Image src={feature.image} alt={feature.title} className="h-full w-full object-contain" />
                 </div>
                 <h4 className="font-montserrat uppercase text-[#000000] text-sm tracking-wide mb-3">
                   {feature.title}

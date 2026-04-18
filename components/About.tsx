@@ -60,11 +60,21 @@ export default function About() {
 
             {/* Image Placeholder */}
             <div
-              className={`mb-12 h-96 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
+              className={`mb-12 h-120 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
                 isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
-              <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Project Overview / Rendered Exterior</p>
+              <iframe
+                src="https://www.youtube.com/embed/l_bYjp6LcU0?si=kX-CyGr6BuAxUwJV"
+                title="YouTube video"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen={true}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 0,
+                }}
+              />
             </div>
 
             {/* Key Stats */}

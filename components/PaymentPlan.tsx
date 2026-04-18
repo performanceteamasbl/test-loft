@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
+import plan1Image from '../assets/plan1.png'
+import plan2Image from '../assets/plan2.png'
 
 export default function PaymentPlan() {
   const [isVisible, setIsVisible] = useState(false)
@@ -34,59 +37,36 @@ export default function PaymentPlan() {
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Heading */}
         <h2
-          className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] text-center mb-4 transition-all duration-1000 ${
+          className={`font-cormorant italic text-5xl md:text-5xl text-[#9D5088] text-center mb-4 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          The 25–75 Payment Plan
+          UNLOCK ₹85000 MONTHLY RENTAL OFFER
         </h2>
         <p className="text-center text-[#000000] font-montserrat text-sm uppercase tracking-wider mb-16">
-          Flexible & Easy Financing Options
+          Right from the date of first disbursement till December 2026
         </p>
 
-        {/* Timeline Steps */}
-        <div className="mb-16">
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {[
-              { num: '1', title: 'Book with ₹5 Lakh', desc: '~2.5% of total cost', delay: 'delay-200' },
-              { num: '2', title: 'Bank Disburses Remaining', desc: '22.5% within 30 days', delay: 'delay-400' },
-              { num: '3', title: 'Pay 75% at Handover', desc: 'December 2026', delay: 'delay-600' },
-            ].map((step, idx) => (
-              <div
-                key={idx}
-                className={`text-center transition-all duration-1000 ${
-                  isVisible ? `opacity-100 translate-y-0 ${step.delay}` : 'opacity-0 translate-y-10'
-                }`}
-              >
-                {/* Step Circle */}
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 rounded-full bg-[#AE8F56] flex items-center justify-center font-cormorant italic text-2xl text-[#9D5088] border-4 border-[#9D5088]">
-                    {step.num}
-                  </div>
-                </div>
-                <h3 className="font-montserrat uppercase text-[#AE8F56] text-sm tracking-wide mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-[#000000] font-lato text-sm">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Connecting Line (visual) */}
-          <div className="hidden md:flex justify-center items-center gap-4 mb-12">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#AE8F56]/30"></div>
-            <p className="text-[#AE8F56]/40 text-xs font-montserrat uppercase">smooth journey</p>
-            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[#AE8F56]/30"></div>
-          </div>
-        </div>
+    
 
         {/* Image Placeholder */}
         <div
-          className={`h-80 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-12 transition-all duration-1000 delay-500 ${
+          className={` p-4 mb-12 transition-all duration-1000 delay-500 ${
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
         >
-          <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Payment Plan Infographic / Illustration</p>
+          <div className="flex flex-col md:flex-row justify-center gap-3 h-100">
+            <Image
+              src={plan1Image}
+              alt="Payment Plan before the rental offer"
+              className="h-100 w-[30%] object-contain"
+            />
+            <Image
+              src={plan2Image}
+              alt="Payment Plan with the rental offer"
+              className="h-100 w-[30%] object-contain"
+            />
+          </div>
         </div>
 
         {/* CTA */}

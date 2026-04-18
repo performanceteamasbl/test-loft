@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import Image from 'next/image'
+import plan1695Image from '../assets/1695.webp'
+import plan1870Image from '../assets/1870.webp'
 
 export default function FloorPlans() {
   const [isVisible, setIsVisible] = useState(false)
@@ -47,8 +50,8 @@ export default function FloorPlans() {
         {/* Floor Plan Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {[
-            { type: 'Type A', size: '1,695 sq. ft.', delay: 'delay-300' },
-            { type: 'Type B', size: '1,870 sq. ft.', delay: 'delay-500' },
+            { type: 'Type A', size: '1,695 sq. ft.', delay: 'delay-300', image: plan1695Image },
+            { type: 'Type B', size: '1,870 sq. ft.', delay: 'delay-500', image: plan1870Image },
           ].map((plan, idx) => (
             <div
               key={idx}
@@ -57,8 +60,8 @@ export default function FloorPlans() {
               }`}
             >
               {/* Image Placeholder */}
-              <div className="h-96 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
-                <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Floor Plan — {plan.size}</p>
+              <div className="h-96 bg-[#ffffff] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
+                <Image src={plan.image} alt={plan.type} className="h-full w-full blur object-cover" />
               </div>
 
               {/* Plan Info */}
