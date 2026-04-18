@@ -68,7 +68,7 @@ export default function Location() {
 
           {/* Map Placeholder */}
           <div className='h-full w-auto'>
-            <Image src={loftlocation} alt="Loft Location" className="h-full w-full object-cover" />
+            <Image src={loftlocation} alt="Loft Location" className="h-full w-full object-contain" />
           </div>
         </div>
 
