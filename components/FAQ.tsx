@@ -53,11 +53,11 @@ export default function FAQ() {
   ]
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-[#0F0F0E]">
+    <section ref={ref} className="py-24 px-6 bg-[#170625]">
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h2
-          className={`font-cormorant italic text-5xl md:text-6xl text-[#FAF7F2] text-center mb-16 transition-all duration-1000 ${
+          className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] text-center mb-16 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
@@ -69,19 +69,19 @@ export default function FAQ() {
           {faqs.map((faq, idx) => (
             <div
               key={idx}
-              className={`border border-[#C9A96E]/30 transition-all duration-1000 ${
+              className={`border border-[#AE8F56]/30 transition-all duration-1000 ${
                 isVisible ? `opacity-100 translate-y-0 delay-${(idx + 1) * 100}` : 'opacity-0 translate-y-10'
               }`}
             >
               <button
                 onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
-                className="w-full flex items-center justify-between p-6 hover:bg-[#1A1A1A]/50 transition-colors duration-300 group"
+                className="w-full flex items-center justify-between p-6 hover:bg-[#0F1520]/50 transition-colors duration-300 group"
               >
-                <h3 className="font-lato text-[#FAF7F2] text-left text-lg group-hover:text-[#C9A96E] transition-colors">
+                <h3 className="font-lato text-[#FEFBF4] text-left text-lg group-hover:text-[#AE8F56] transition-colors">
                   {faq.question}
                 </h3>
                 <svg
-                  className={`w-6 h-6 text-[#C9A96E] flex-shrink-0 ml-4 transition-transform duration-300 ${
+                  className={`w-6 h-6 text-[#AE8F56] flex-shrink-0 ml-4 transition-transform duration-300 ${
                     expandedIdx === idx ? 'rotate-180' : ''
                   }`}
                   fill="none"
@@ -94,8 +94,8 @@ export default function FAQ() {
 
               {/* Answer */}
               {expandedIdx === idx && (
-                <div className="px-6 pb-6 border-t border-[#C9A96E]/20 animate-fadeInUp">
-                  <p className="text-[#A89880] font-lato leading-relaxed">{faq.answer}</p>
+                <div className="px-6 pb-6 border-t border-[#AE8F56]/20 animate-fadeInUp">
+                  <p className="text-[#706E6B] font-lato leading-relaxed">{faq.answer}</p>
                 </div>
               )}
             </div>

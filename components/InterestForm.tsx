@@ -67,7 +67,7 @@ export default function InterestForm() {
   }
 
   return (
-    <section id="contact" ref={ref} className="py-24 px-6 bg-[#F5F0E8]">
+    <section id="contact" ref={ref} className="py-24 px-6 bg-[#F9F6F1]">
       <div className="max-w-2xl mx-auto">
         {/* Heading */}
         <div
@@ -75,10 +75,10 @@ export default function InterestForm() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <h2 className="font-cormorant italic text-5xl md:text-6xl text-[#1A1A1A] mb-4">
+          <h2 className="font-cormorant italic text-5xl md:text-6xl text-[#0F1520] mb-4">
             Are you interested in this Property?
           </h2>
-          <p className="text-[#A89880] font-montserrat text-sm uppercase tracking-wider">
+          <p className="text-[#706E6B] font-montserrat text-sm uppercase tracking-wider">
             Connect with our team for a personalised walkthrough
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function InterestForm() {
           >
             {/* Name */}
             <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#1A1A1A] mb-2">
+              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#0F1520] mb-2">
                 Full Name
               </label>
               <input
@@ -102,14 +102,14 @@ export default function InterestForm() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-6 py-3 bg-white border-2 border-[#C9A96E] text-[#1A1A1A] focus:outline-none focus:border-[#C9A96E] placeholder-[#A89880]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#0F1520] focus:outline-none focus:border-[#AE8F56] placeholder-[#706E6B]"
                 placeholder="Your name"
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#1A1A1A] mb-2">
+              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#0F1520] mb-2">
                 Phone Number
               </label>
               <input
@@ -118,14 +118,14 @@ export default function InterestForm() {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-6 py-3 bg-white border-2 border-[#C9A96E] text-[#1A1A1A] focus:outline-none focus:border-[#C9A96E] placeholder-[#A89880]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#0F1520] focus:outline-none focus:border-[#AE8F56] placeholder-[#706E6B]"
                 placeholder="+91 XXXXX XXXXX"
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#1A1A1A] mb-2">
+              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#0F1520] mb-2">
                 Email Address
               </label>
               <input
@@ -134,21 +134,21 @@ export default function InterestForm() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-6 py-3 bg-white border-2 border-[#C9A96E] text-[#1A1A1A] focus:outline-none focus:border-[#C9A96E] placeholder-[#A89880]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#0F1520] focus:outline-none focus:border-[#AE8F56] placeholder-[#706E6B]"
                 placeholder="your@email.com"
               />
             </div>
 
             {/* Preferred Time */}
             <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#1A1A1A] mb-2">
+              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#0F1520] mb-2">
                 Preferred Time to Call
               </label>
               <select
                 name="preferredTime"
                 value={formData.preferredTime}
                 onChange={handleChange}
-                className="w-full px-6 py-3 bg-white border-2 border-[#C9A96E] text-[#1A1A1A] focus:outline-none focus:border-[#C9A96E]"
+                className="w-full px-6 py-3 bg-white border-2 border-[#AE8F56] text-[#0F1520] focus:outline-none focus:border-[#AE8F56]"
               >
                 <option value="morning">Morning (9 AM - 12 PM)</option>
                 <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
@@ -164,13 +164,13 @@ export default function InterestForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-[#C9A96E] text-[#1A1A1A] font-montserrat uppercase tracking-wide hover:bg-[#BFA06A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+              className="w-full py-4 bg-[#AE8F56] text-[#0F1520] font-montserrat uppercase tracking-wide hover:bg-[#7B4600] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isLoading ? 'Sending...' : 'Request a Callback'}
             </button>
 
             {/* Reassurance Text */}
-            <p className="text-center text-[#A89880] font-lato text-sm">
+            <p className="text-center text-[#706E6B] font-lato text-sm">
               No spam. Our team will reach out within 24 hours.
             </p>
           </form>
@@ -180,13 +180,13 @@ export default function InterestForm() {
               isSubmitted ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#C9A96E] mb-6">
-              <svg className="w-8 h-8 text-[#1A1A1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#AE8F56] mb-6">
+              <svg className="w-8 h-8 text-[#0F1520]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="font-cormorant italic text-3xl text-[#1A1A1A] mb-2">Thank You!</h3>
-            <p className="text-[#A89880] font-lato">
+            <h3 className="font-cormorant italic text-3xl text-[#0F1520] mb-2">Thank You!</h3>
+            <p className="text-[#706E6B] font-lato">
               We&apos;ll reach out to you shortly to arrange a personalized walkthrough.
             </p>
           </div>

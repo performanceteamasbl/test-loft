@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=Lato:wght@400;500;700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -5,87 +6,87 @@
 
 :root {
   /* ASBL Loft Luxury Color Palette */
-  --color-bg: #1A1A1A;
-  --color-gold: #C9A96E;
-  --color-cream: #F5F0E8;
-  --color-text: #FAF7F2;
-  --color-muted: #A89880;
-  --color-bg-dark: #0F0F0E;
+  --color-bg: #0F1520;
+  --color-gold: #AE8F56;
+  --color-cream: #F9F6F1;
+  --color-text: #FEFBF4;
+  --color-muted: #706E6B;
+  --color-bg-dark: #170625;
   
   /* Standard theme colors */
-  --background: #1A1A1A;
-  --foreground: #FAF7F2;
-  --card: #1A1A1A;
-  --card-foreground: #FAF7F2;
-  --popover: #1A1A1A;
-  --popover-foreground: #FAF7F2;
-  --primary: #C9A96E;
-  --primary-foreground: #1A1A1A;
-  --secondary: #F5F0E8;
-  --secondary-foreground: #1A1A1A;
-  --muted: #A89880;
-  --muted-foreground: #666666;
-  --accent: #C9A96E;
-  --accent-foreground: #1A1A1A;
+  --background: #0F1520;
+  --foreground: #FEFBF4;
+  --card: #0F1520;
+  --card-foreground: #FEFBF4;
+  --popover: #0F1520;
+  --popover-foreground: #FEFBF4;
+  --primary: #AE8F56;
+  --primary-foreground: #0F1520;
+  --secondary: #F9F6F1;
+  --secondary-foreground: #0F1520;
+  --muted: #706E6B;
+  --muted-foreground: #5F5A57;
+  --accent: #AE8F56;
+  --accent-foreground: #0F1520;
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: #333333;
-  --input: #2A2A2A;
-  --ring: #C9A96E;
-  --chart-1: #C9A96E;
-  --chart-2: #A89880;
-  --chart-3: #F5F0E8;
-  --chart-4: #666666;
+  --border: #4B3E52;
+  --input: #1E1E1E;
+  --ring: #AE8F56;
+  --chart-1: #AE8F56;
+  --chart-2: #706E6B;
+  --chart-3: #F9F6F1;
+  --chart-4: #5F5A57;
   --chart-5: #888888;
   --radius: 0.625rem;
-  --sidebar: #1A1A1A;
-  --sidebar-foreground: #FAF7F2;
-  --sidebar-primary: #C9A96E;
-  --sidebar-primary-foreground: #1A1A1A;
-  --sidebar-accent: #F5F0E8;
-  --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #333333;
-  --sidebar-ring: #C9A96E;
+  --sidebar: #0F1520;
+  --sidebar-foreground: #FEFBF4;
+  --sidebar-primary: #AE8F56;
+  --sidebar-primary-foreground: #0F1520;
+  --sidebar-accent: #F9F6F1;
+  --sidebar-accent-foreground: #0F1520;
+  --sidebar-border: #4B3E52;
+  --sidebar-ring: #AE8F56;
 }
 
 .dark {
-  --color-bg: #1A1A1A;
-  --color-gold: #C9A96E;
-  --color-cream: #F5F0E8;
-  --color-text: #FAF7F2;
-  --color-muted: #A89880;
-  --background: #1A1A1A;
-  --foreground: #FAF7F2;
-  --card: #1A1A1A;
-  --card-foreground: #FAF7F2;
-  --popover: #1A1A1A;
-  --popover-foreground: #FAF7F2;
-  --primary: #C9A96E;
-  --primary-foreground: #1A1A1A;
-  --secondary: #F5F0E8;
-  --secondary-foreground: #1A1A1A;
-  --muted: #A89880;
-  --muted-foreground: #666666;
-  --accent: #C9A96E;
-  --accent-foreground: #1A1A1A;
+  --color-bg: #0F1520;
+  --color-gold: #AE8F56;
+  --color-cream: #F9F6F1;
+  --color-text: #FEFBF4;
+  --color-muted: #706E6B;
+  --background: #0F1520;
+  --foreground: #FEFBF4;
+  --card: #0F1520;
+  --card-foreground: #FEFBF4;
+  --popover: #0F1520;
+  --popover-foreground: #FEFBF4;
+  --primary: #AE8F56;
+  --primary-foreground: #0F1520;
+  --secondary: #F9F6F1;
+  --secondary-foreground: #0F1520;
+  --muted: #706E6B;
+  --muted-foreground: #5F5A57;
+  --accent: #AE8F56;
+  --accent-foreground: #0F1520;
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: #333333;
-  --input: #2A2A2A;
-  --ring: #C9A96E;
-  --chart-1: #C9A96E;
-  --chart-2: #A89880;
-  --chart-3: #F5F0E8;
-  --chart-4: #666666;
+  --border: #4B3E52;
+  --input: #1E1E1E;
+  --ring: #AE8F56;
+  --chart-1: #AE8F56;
+  --chart-2: #706E6B;
+  --chart-3: #F9F6F1;
+  --chart-4: #5F5A57;
   --chart-5: #888888;
-  --sidebar: #1A1A1A;
-  --sidebar-foreground: #FAF7F2;
-  --sidebar-primary: #C9A96E;
-  --sidebar-primary-foreground: #1A1A1A;
-  --sidebar-accent: #F5F0E8;
-  --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #333333;
-  --sidebar-ring: #C9A96E;
+  --sidebar: #0F1520;
+  --sidebar-foreground: #FEFBF4;
+  --sidebar-primary: #AE8F56;
+  --sidebar-primary-foreground: #0F1520;
+  --sidebar-accent: #F9F6F1;
+  --sidebar-accent-foreground: #0F1520;
+  --sidebar-border: #4B3E52;
+  --sidebar-ring: #AE8F56;
 }
 
 @theme inline {
@@ -139,8 +140,6 @@
 }
 
 /* ASBL Loft Typography */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=Lato:wght@400;500;700&display=swap');
-
 .font-cormorant {
   font-family: 'Cormorant Garamond', serif;
 }

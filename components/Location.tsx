@@ -31,28 +31,28 @@ export default function Location() {
   ]
 
   return (
-    <section id="location" ref={ref} className="py-24 px-6 bg-[#0F0F0E]">
+    <section id="location" ref={ref} className="py-24 px-6 bg-[#170625]">
       <div className="max-w-6xl mx-auto">
         {/* Main Content */}
         <div className="grid md:grid-cols-2 gap-12 mb-16 items-start">
           {/* Text Content */}
           <div>
             <h2
-              className={`font-cormorant italic text-5xl md:text-6xl text-[#FAF7F2] mb-6 transition-all duration-1000 ${
+              className={`font-cormorant italic text-5xl md:text-6xl text-[#FEFBF4] mb-6 transition-all duration-1000 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
               Prime Location, Limitless Possibilities
             </h2>
             <h3
-              className={`font-montserrat uppercase text-[#C9A96E] text-sm tracking-wide mb-6 transition-all duration-1000 delay-200 ${
+              className={`font-montserrat uppercase text-[#AE8F56] text-sm tracking-wide mb-6 transition-all duration-1000 delay-200 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
               Premium 3BHK flats in the heart of Financial District
             </h3>
             <p
-              className={`text-[#A89880] font-lato text-lg leading-relaxed mb-8 transition-all duration-1000 delay-300 ${
+              className={`text-[#706E6B] font-lato text-lg leading-relaxed mb-8 transition-all duration-1000 delay-300 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -62,17 +62,17 @@ export default function Location() {
 
           {/* Map Placeholder */}
           <div
-            className={`h-96 bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border-2 border-dashed border-[#C9A96E]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
+            className={`h-96 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
               isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
           >
-            <p className="text-[#C9A96E]/60 italic font-cormorant text-lg">Location Map / Aerial View</p>
+            <p className="text-[#AE8F56]/60 italic font-cormorant text-lg">Location Map / Aerial View</p>
           </div>
         </div>
 
         {/* Why Financial District */}
         <div className="mb-0">
-          <h3 className="font-montserrat uppercase text-[#C9A96E] text-sm tracking-wide mb-8 text-center">
+          <h3 className="font-montserrat uppercase text-[#AE8F56] text-sm tracking-wide mb-8 text-center">
             Why Financial District?
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
@@ -84,13 +84,13 @@ export default function Location() {
                 }`}
               >
                 {/* Feature Image Placeholder */}
-                <div className="h-48 bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#C9A96E]/20 flex items-center justify-center mb-4 group-hover:border-[#C9A96E]/40 transition-colors duration-300">
-                  <p className="text-[#C9A96E]/40 italic font-cormorant text-sm">{feature.title}</p>
+                <div className="h-48 bg-gradient-to-br from-[#1E1E1E] to-[#0F1520] border border-[#AE8F56]/20 flex items-center justify-center mb-4 group-hover:border-[#AE8F56]/40 transition-colors duration-300">
+                  <p className="text-[#AE8F56]/40 italic font-cormorant text-sm">{feature.title}</p>
                 </div>
-                <h4 className="font-montserrat uppercase text-[#FAF7F2] text-sm tracking-wide mb-3">
+                <h4 className="font-montserrat uppercase text-[#FEFBF4] text-sm tracking-wide mb-3">
                   {feature.title}
                 </h4>
-                <p className="text-[#A89880] font-lato text-sm">{feature.desc}</p>
+                <p className="text-[#706E6B] font-lato text-sm">{feature.desc}</p>
               </div>
             ))}
           </div>

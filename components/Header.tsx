@@ -19,13 +19,13 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#1A1A1A]/95 backdrop-blur-sm border-b border-[#C9A96E]/20'
+          ? 'bg-[#0F1520]/95 backdrop-blur-sm border-b border-[#AE8F56]/20'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         {/* Logo */}
-        <div className="font-cormorant text-2xl font-semibold tracking-wider text-[#C9A96E] italic">
+        <div className="font-cormorant text-2xl font-semibold tracking-wider text-[#AE8F56] italic">
           ASBL LOFT
         </div>
 
@@ -33,38 +33,38 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-8">
           <Link
             href="#about"
-            className="text-[#FAF7F2] hover:text-[#C9A96E] transition-colors text-sm font-montserrat uppercase tracking-wide"
+            className="text-[#FEFBF4] hover:text-[#AE8F56] transition-colors text-sm font-montserrat uppercase tracking-wide"
           >
             About
           </Link>
           <Link
             href="#location"
-            className="text-[#FAF7F2] hover:text-[#C9A96E] transition-colors text-sm font-montserrat uppercase tracking-wide"
+            className="text-[#FEFBF4] hover:text-[#AE8F56] transition-colors text-sm font-montserrat uppercase tracking-wide"
           >
             Location
           </Link>
           <Link
             href="#floor-plans"
-            className="text-[#FAF7F2] hover:text-[#C9A96E] transition-colors text-sm font-montserrat uppercase tracking-wide"
+            className="text-[#FEFBF4] hover:text-[#AE8F56] transition-colors text-sm font-montserrat uppercase tracking-wide"
           >
             Floor Plans
           </Link>
           <Link
             href="#amenities"
-            className="text-[#FAF7F2] hover:text-[#C9A96E] transition-colors text-sm font-montserrat uppercase tracking-wide"
+            className="text-[#FEFBF4] hover:text-[#AE8F56] transition-colors text-sm font-montserrat uppercase tracking-wide"
           >
             Amenities
           </Link>
           <Link
             href="#contact"
-            className="text-[#FAF7F2] hover:text-[#C9A96E] transition-colors text-sm font-montserrat uppercase tracking-wide"
+            className="text-[#FEFBF4] hover:text-[#AE8F56] transition-colors text-sm font-montserrat uppercase tracking-wide"
           >
             Contact
           </Link>
         </nav>
 
         {/* CTA Button */}
-        <button className="px-6 py-2 border-2 border-[#C9A96E] text-[#C9A96E] hover:bg-[#C9A96E] hover:text-[#1A1A1A] transition-all duration-300 text-sm font-montserrat uppercase tracking-wide">
+        <button className="px-6 py-2 border-2 border-[#AE8F56] text-[#AE8F56] hover:bg-[#AE8F56] hover:text-[#0F1520] transition-all duration-300 text-sm font-montserrat uppercase tracking-wide">
           Book a Site Visit
         </button>
       </div>
