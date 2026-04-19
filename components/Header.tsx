@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { MotionButton } from '@/components/ui/hover-effects'
 import { openInterestFormPopup } from '@/lib/popup'
+import loftLogo from '../assets/LOFT_LOGO.svg'
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -50,9 +52,14 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between gap-4">
         {/* Logo */}
-        <div className="font-cormorant text-xl sm:text-2xl font-semibold tracking-wider text-[#AE8F56] italic">
-          ASBL LOFT
-        </div>
+        <Link href="/" className="shrink-0" aria-label="ASBL Loft home">
+          <Image
+            src={loftLogo}
+            alt="ASBL Loft"
+            className="h-8 sm:h-10 w-auto"
+            priority
+          />
+        </Link>
 
         {/* Navigation */}
         <nav className="hidden lg:flex items-center gap-8">
