@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import plan1695Image from '../assets/1695.webp'
 import plan1870Image from '../assets/1870.webp'
+import { MotionButton, MotionCard } from '@/components/ui/hover-effects'
+import { openInterestFormPopup } from '@/lib/popup'
 
 export default function FloorPlans() {
   const [isVisible, setIsVisible] = useState(false)
@@ -27,12 +29,12 @@ export default function FloorPlans() {
   }, [])
 
   return (
-    <section id="floor-plans" ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
+    <section id="floor-plans" ref={ref} className="py-20 md:py-24 px-4 sm:px-6 bg-[#FFFFFF]">
       <div className="max-w-6xl mx-auto">
         {/* Heading */}
         <div className="mb-16 text-center">
           <h2
-            className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] mb-4 transition-all duration-1000 ${
+            className={`font-cormorant italic text-4xl sm:text-5xl md:text-6xl text-[#000000] mb-4 transition-all duration-1000 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
@@ -48,20 +50,20 @@ export default function FloorPlans() {
         </div>
 
         {/* Floor Plan Cards */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12">
           {[
             { type: 'Type A', size: '1,695 sq. ft.', delay: 'delay-300', image: plan1695Image },
             { type: 'Type B', size: '1,870 sq. ft.', delay: 'delay-500', image: plan1870Image },
           ].map((plan, idx) => (
-            <div
+            <MotionCard
               key={idx}
               className={`group cursor-pointer transition-all duration-1000 ${
                 isVisible ? `opacity-100 translate-y-0 ${plan.delay}` : 'opacity-0 translate-y-10'
               }`}
             >
               {/* Image Placeholder */}
-              <div className="h-96 bg-[#ffffff] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
-                <Image src={plan.image} alt={plan.type} className="h-full w-full blur object-cover" />
+              <div className="h-64 sm:h-80 md:h-96 bg-[#ffffff] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
+                <Image src={plan.image} alt={plan.type} className="h-full w-full object-cover" />
               </div>
 
               {/* Plan Info */}
@@ -71,18 +73,18 @@ export default function FloorPlans() {
                 </h3>
                 <p className="font-cormorant italic text-2xl text-[#000000]">{plan.size}</p>
               </div>
-            </div>
+            </MotionCard>
           ))}
         </div>
 
         {/* CTA */}
         <div className="text-center">
-          <button className="inline-flex items-center gap-3 px-8 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300">
+          <MotionButton onClick={openInterestFormPopup} className="inline-flex items-center gap-3 px-6 sm:px-8 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300">
             <span>Explore All Plans</span>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </MotionButton>
         </div>
       </div>
     </section>

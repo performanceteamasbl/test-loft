@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
+import { MotionCard } from '@/components/ui/hover-effects'
 import loftlocation from '../assets/Loft-Nearby-Map.webp'
 import why1Image from '../assets/Why-1.webp'
 import why2Image from '../assets/Why-2.webp'
@@ -37,14 +38,14 @@ export default function Location() {
   ]
 
   return (
-    <section id="location" ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
+    <section id="location" ref={ref} className="py-20 md:py-24 px-4 sm:px-6 bg-[#FFFFFF]">
       <div className="max-w-6xl mx-auto">
         {/* Main Content */}
-        <div className="grid md:grid-cols-2 gap-12 mb-16 items-start">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 mb-16 items-start">
           {/* Text Content */}
           <div>
             <h2
-              className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] mb-6 transition-all duration-1000 ${
+              className={`font-cormorant italic text-4xl sm:text-5xl md:text-6xl text-[#000000] mb-6 transition-all duration-1000 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -58,7 +59,7 @@ export default function Location() {
               Premium 3BHK flats in the heart of Financial District
             </h3>
             <p
-              className={`text-[#000000] font-lato text-lg leading-relaxed mb-8 transition-all duration-1000 delay-300 ${
+              className={`text-[#000000] font-lato text-base sm:text-lg leading-relaxed mb-8 transition-all duration-1000 delay-300 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -67,8 +68,8 @@ export default function Location() {
           </div>
 
           {/* Map Placeholder */}
-          <div className='h-full w-auto'>
-            <Image src={loftlocation} alt="Loft Location" className="h-full w-full object-contain" />
+          <div className="h-full w-full">
+            <Image src={loftlocation} alt="Loft Location" className="h-auto w-full object-contain" />
           </div>
         </div>
 
@@ -79,7 +80,7 @@ export default function Location() {
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
             {features.map((feature, idx) => (
-              <div
+              <MotionCard
                 key={idx}
                 className={`group transition-all duration-1000 ${
                   isVisible ? `opacity-100 translate-y-0 delay-${(idx + 5) * 100}` : 'opacity-0 translate-y-10'
@@ -93,7 +94,7 @@ export default function Location() {
                   {feature.title}
                 </h4>
                 <p className="text-[#000000] font-lato text-sm">{feature.desc}</p>
-              </div>
+              </MotionCard>
             ))}
           </div>
         </div>

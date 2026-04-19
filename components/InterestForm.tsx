@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { MotionButton } from '@/components/ui/hover-effects'
 
 type FormState = {
   name: string
@@ -74,7 +75,11 @@ const formatPhoneWithCountryCode = (rawPhone: string, countryCode: string): stri
   return `${normalizedCode}${digits}`
 }
 
-export default function InterestForm() {
+type InterestFormProps = {
+  asPopup?: boolean
+}
+
+export default function InterestForm({ asPopup = false }: InterestFormProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -108,6 +113,11 @@ export default function InterestForm() {
   const ref = useRef(null)
 
   useEffect(() => {
+    if (asPopup) {
+      setIsVisible(true)
+      return
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -122,7 +132,7 @@ export default function InterestForm() {
     }
 
     return () => observer.disconnect()
-  }, [])
+  }, [asPopup])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -152,13 +162,18 @@ export default function InterestForm() {
       try {
         const response = await fetch('https://ipapi.co/json/')
         const data = await response.json()
+        const detectedShort = ((data?.country || data?.country_code || '') as string).toUpperCase()
+        const detectedDialCode = normalizeCountryCode(data?.country_calling_code)
+
         setGeoData({
           city: data?.city || '',
-          country: data?.country || '',
-          country_code: normalizeCountryCode(data?.country_calling_code),
+          country: detectedShort,
+          country_code: detectedDialCode,
         })
-        setSelectedCountryShort((data?.country || 'IN').toUpperCase())
-        setSelectedCountryCode(normalizeCountryCode(data?.country_calling_code))
+        setSelectedCountryCode(detectedDialCode)
+        if (detectedShort) {
+          setSelectedCountryShort(detectedShort)
+        }
       } catch {
         setGeoData((prev) => ({
           ...prev,
@@ -213,11 +228,18 @@ export default function InterestForm() {
   }, [])
 
   useEffect(() => {
-    const matchedCountry = countryOptions.find((option) => option.short === selectedCountryShort)
-    if (matchedCountry) {
-      setSelectedCountryCode(matchedCountry.dialCode)
+    const matchedByShort = countryOptions.find((option) => option.short === selectedCountryShort)
+
+    if (matchedByShort && matchedByShort.dialCode !== selectedCountryCode) {
+      setSelectedCountryCode(matchedByShort.dialCode)
+      return
     }
-  }, [countryOptions, selectedCountryShort])
+
+    const matchedByCode = countryOptions.find((option) => option.dialCode === selectedCountryCode)
+    if (matchedByCode && matchedByCode.short !== selectedCountryShort) {
+      setSelectedCountryShort(matchedByCode.short)
+    }
+  }, [countryOptions, selectedCountryShort, selectedCountryCode])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -289,7 +311,7 @@ export default function InterestForm() {
   }
 
   return (
-    <section id="contact" ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
+    <section id={asPopup ? undefined : 'contact'} ref={ref} className={asPopup ? 'bg-[#FFFFFF]' : 'py-24 px-6 bg-[#FFFFFF]'}>
       <div className="max-w-2xl mx-auto">
         {/* Heading */}
         <div
@@ -297,7 +319,7 @@ export default function InterestForm() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <h2 className="font-cormorant italic text-5xl md:text-6xl text-[#9D5088] mb-4">
+          <h2 className="font-cormorant italic text-4xl sm:text-5xl md:text-6xl text-[#9D5088] mb-4">
             Are you interested in this Property?
           </h2>
           <p className="text-[#000000] font-montserrat text-sm uppercase tracking-wider">
@@ -334,7 +356,7 @@ export default function InterestForm() {
               <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
                 Phone Number
               </label>
-              <div className="grid grid-cols-[110px_1fr] gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
                 <select
                   name="country_code"
                   value={selectedCountryShort}
@@ -441,13 +463,13 @@ export default function InterestForm() {
             ) : null}
 
             {/* Submit Button */}
-            <button
+            <MotionButton
               type="submit"
               disabled={isLoading}
               className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isLoading ? 'Sending...' : 'Request a Callback'}
-            </button>
+            </MotionButton>
 
             {/* Reassurance Text */}
             <p className="text-center text-[#000000] font-lato text-sm">

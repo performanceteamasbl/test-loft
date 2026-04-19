@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { MotionButton } from '@/components/ui/hover-effects'
+import { openInterestFormPopup } from '@/lib/popup'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
@@ -10,7 +12,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex flex-col items-start justify-center overflow-hidden pt-20">
       {/* Hero Background Placeholder */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#9D5088] to-[#9D5088] flex items-center justify-center">
         <div className="w-full h-full bg-gradient-to-b from-[#9D5088]/40 via-[#9D5088]/60 to-[#9D5088] flex flex-col items-center justify-center border-2 border-dashed border-[#AE8F56]/30">
@@ -25,7 +27,8 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16">
+        <div className="max-w-4xl text-left">
         {/* Badge */}
         <div
           className={`inline-block mb-8 border border-[#AE8F56] px-6 py-2 text-[#AE8F56] text-xs font-montserrat uppercase tracking-widest transition-all duration-1000 ${
@@ -37,7 +40,7 @@ export default function Hero() {
 
         {/* Main Headline */}
         <h1
-          className={`font-cormorant italic text-6xl md:text-7xl lg:text-8xl text-[#FFFFFF] mb-6 leading-tight transition-all duration-1000 delay-200 ${
+          className={`font-cormorant italic text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#FFFFFF] mb-6 leading-tight transition-all duration-1000 delay-200 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
@@ -55,16 +58,17 @@ export default function Hero() {
 
         {/* CTAs */}
         <div
-          className={`flex flex-col md:flex-row gap-6 justify-center mb-16 transition-all duration-1000 delay-400 ${
+          className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-start mb-16 transition-all duration-1000 delay-400 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <button className="px-10 py-4 bg-[#FDE68A] text-[#854D0E] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 hover:shadow-lg hover:shadow-[#AE8F56]/20">
+          <MotionButton onClick={openInterestFormPopup} className="w-full sm:w-auto px-6 sm:px-10 py-4 bg-[#FDE68A] text-[#854D0E] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 hover:shadow-lg hover:shadow-[#AE8F56]/20">
             Book a Site Visit
-          </button>
-          <button className="px-10 py-4 border-2 border-[#FDE68A] text-[#FDE68A] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300">
+          </MotionButton>
+          <MotionButton onClick={openInterestFormPopup} className="w-full sm:w-auto px-6 sm:px-10 py-4 border-2 border-[#FDE68A] text-[#FDE68A] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300">
             Download Brochure
-          </button>
+          </MotionButton>
+        </div>
         </div>
       </div>
 

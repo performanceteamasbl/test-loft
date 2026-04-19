@@ -24,16 +24,16 @@ export default function About() {
   }, [])
 
   return (
-    <section id="about" ref={ref} className="py-24 px-6 bg-[#FFFFFF] relative">
+    <section id="about" ref={ref} className="py-20 md:py-24 px-4 sm:px-6 bg-[#FFFFFF] relative">
       <div className="max-w-6xl mx-auto">
         {/* Section Label */}
-        <div className="mb-16 flex items-start gap-8">
-          <div className="text-[#000000] font-montserrat text-sm uppercase tracking-wider opacity-60">
+        <div className="mb-16 flex flex-col md:flex-row items-start gap-6 md:gap-8">
+          <div className="text-[#000000] font-montserrat text-xs sm:text-sm uppercase tracking-wider opacity-60">
             01 / ABOUT
           </div>
           <div className="flex-1">
             <h2
-              className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] mb-8 transition-all duration-1000 ${
+              className={`font-cormorant italic text-4xl sm:text-5xl md:text-6xl text-[#000000] mb-8 transition-all duration-1000 ${
                 isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
               }`}
             >
@@ -41,7 +41,7 @@ export default function About() {
             </h2>
 
             {/* Content */}
-            <div className="space-y-6 font-lato text-[#000000] text-lg leading-relaxed mb-12">
+            <div className="space-y-6 font-lato text-[#000000] text-base sm:text-lg leading-relaxed mb-12">
               <p
                 className={`transition-all duration-1000 delay-200 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
@@ -60,7 +60,7 @@ export default function About() {
 
             {/* Image Placeholder */}
             <div
-              className={`mb-12 h-120 bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
+              className={`mb-12 h-[260px] sm:h-[340px] md:h-[480px] bg-gradient-to-br from-[#9D5088] to-[#9D5088] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center transition-all duration-1000 delay-400 ${
                 isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
@@ -78,7 +78,7 @@ export default function About() {
             </div>
 
             {/* Key Stats */}
-            <div className="flex flex-wrap gap-4 text-center md:text-left border-t border-[#AE8F56]/20 pt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center md:text-left border-t border-[#AE8F56]/20 pt-8">
               {[
                 { label: 'G+45 Floors', delay: 'delay-500' },
                 { label: '1695–1870 sq. ft', delay: 'delay-600' },

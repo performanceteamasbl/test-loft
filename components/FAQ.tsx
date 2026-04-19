@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { MotionButton, MotionCard } from '@/components/ui/hover-effects'
 
 export default function FAQ() {
   const [isVisible, setIsVisible] = useState(false)
@@ -53,11 +54,11 @@ export default function FAQ() {
   ]
 
   return (
-    <section ref={ref} className="py-24 px-6 bg-[#FFFFFF]">
+    <section ref={ref} className="py-20 md:py-24 px-4 sm:px-6 bg-[#FFFFFF]">
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h2
-          className={`font-cormorant italic text-5xl md:text-6xl text-[#000000] text-center mb-16 transition-all duration-1000 ${
+          className={`font-cormorant italic text-4xl sm:text-5xl md:text-6xl text-[#000000] text-center mb-12 sm:mb-16 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
@@ -67,13 +68,13 @@ export default function FAQ() {
         {/* FAQ Accordion */}
         <div className="space-y-4">
           {faqs.map((faq, idx) => (
-            <div
+            <MotionCard
               key={idx}
               className={`border border-[#AE8F56]/30 transition-all duration-1000 ${
                 isVisible ? `opacity-100 translate-y-0 delay-${(idx + 1) * 100}` : 'opacity-0 translate-y-10'
               }`}
             >
-              <button
+              <MotionButton
                 onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
                 className="w-full flex items-center justify-between p-6 hover:bg-[#9D5088] transition-colors duration-300 group"
               >
@@ -90,7 +91,7 @@ export default function FAQ() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
-              </button>
+              </MotionButton>
 
               {/* Answer */}
               {expandedIdx === idx && (
@@ -98,7 +99,7 @@ export default function FAQ() {
                   <p className="text-[#000000] font-lato leading-relaxed">{faq.answer}</p>
                 </div>
               )}
-            </div>
+            </MotionCard>
           ))}
         </div>
       </div>
