@@ -24,7 +24,7 @@ export default function About() {
   }, [])
 
   return (
-    <section id="about" ref={ref} className="py-20 md:py-24 px-4 sm:px-6 bg-[#FFFFFF] relative">
+    <section id="about" ref={ref} className="pt-20 md:pt-24 px-4 sm:px-6 bg-[#FFFFFF] relative">
       <div className="max-w-6xl mx-auto">
         {/* Section Label */}
         <div className="mb-16 flex flex-col md:flex-row items-start gap-6 md:gap-8">

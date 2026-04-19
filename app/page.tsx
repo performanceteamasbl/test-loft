@@ -28,7 +28,7 @@ export default function Home() {
   }, [])
 
   return (
-    <main onClickCapture={handleOpenPopupFromButtons} className="min-h-screen bg-[#9D5088] text-[#FFFFFF]">
+    <main onClickCapture={handleOpenPopupFromButtons} className="min-h-screen bg-[#FFFFFF] text-[#FFFFFF]">
       <InterestFormPopup />
       <Header />
       <Hero />
