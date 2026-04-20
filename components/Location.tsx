@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { MotionCard } from '@/components/ui/hover-effects'
-import loftlocation from '../assets/Loft-Nearby-Map.webp'
+import loftlocation from '../assets/Loft-Nearby-Map2.webp'
 import why1Image from '../assets/Why-1.webp'
 import why2Image from '../assets/Why-2.webp'
 import why3Image from '../assets/Why-3.webp'

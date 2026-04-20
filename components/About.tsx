@@ -78,7 +78,7 @@ export default function About() {
             </div>
 
             {/* Key Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center md:text-left border-t border-[#AE8F56]/20 pt-8">
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center md:text-left border-t border-[#AE8F56]/20 pt-8">
               {[
                 { label: 'G+45 Floors', delay: 'delay-500' },
                 { label: '1695–1870 sq. ft', delay: 'delay-600' },
@@ -90,7 +90,7 @@ export default function About() {
                   <p className="font-lato text-[#000000]">{stat.label}</p>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

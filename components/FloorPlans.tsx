@@ -63,7 +63,7 @@ export default function FloorPlans() {
             >
               {/* Image Placeholder */}
               <div className="h-64 sm:h-80 md:h-96 bg-[#ffffff] border-2 border-dashed border-[#AE8F56]/30 flex items-center justify-center mb-6 group-hover:border-[#AE8F56]/60 transition-colors duration-300">
-                <Image src={plan.image} alt={plan.type} className="h-full w-full object-cover" />
+                <Image src={plan.image} alt={plan.type} className="h-full blur w-full object-cover" />
               </div>
 
               {/* Plan Info */}

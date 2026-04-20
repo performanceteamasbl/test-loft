@@ -17,7 +17,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#9D5088] to-[#9D5088] flex items-center justify-center">
         <div className="w-full h-full bg-gradient-to-b from-[#9D5088]/40 via-[#9D5088]/60 to-[#9D5088] flex flex-col items-center justify-center border-2 border-dashed border-[#AE8F56]/30">
           <img
-            src="https://images.asbl.in/img?u=https://media.asbl.in/Loft/Web/landing/q-30/latestLandingBgWeb.png&w=1900&h=1080&fit=cover&fmt=webp&v=2&p=loft&m=100&pos=Top-right"
+            src="https://images.asbl.in/img?u=https://media.asbl.in/Loft/Web/landing/q-30/latestLandingBgWeb.png&w=1900&h=1080&fit=cover&fmt=webp&v=2&p=loft&m=160&pos=Top-right"
             alt="ASBL Loft"
             className={`w-full h-full object-cover transition-all duration-1000 ${
               isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
