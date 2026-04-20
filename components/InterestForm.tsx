@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { MotionButton } from '@/components/ui/hover-effects'
+import { trackEvent } from '@/lib/fpixel'
 
 type FormState = {
   name: string
@@ -79,11 +80,26 @@ type InterestFormProps = {
   asPopup?: boolean
 }
 
+const createEventId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+
+  return `lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 export default function InterestForm({ asPopup = false }: InterestFormProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isSendingOtp, setIsSendingOtp] = useState(false)
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [otpErrorMessage, setOtpErrorMessage] = useState('')
+  const [otpSuccessMessage, setOtpSuccessMessage] = useState('')
+  const [otpCode, setOtpCode] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpVerified, setOtpVerified] = useState(false)
   const [formData, setFormData] = useState<FormState>({
     name: '',
     phone: '',
@@ -241,20 +257,118 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     }
   }, [countryOptions, selectedCountryShort, selectedCountryCode])
 
+  const effectiveCountryCode = selectedCountryCode || geoData.country_code || DEFAULT_COUNTRY_CODE
+  const phoneWithCountryCode = formatPhoneWithCountryCode(formData.phone, effectiveCountryCode)
+
+  const resetOtpState = () => {
+    setOtpSent(false)
+    setOtpVerified(false)
+    setOtpCode('')
+    setOtpErrorMessage('')
+    setOtpSuccessMessage('')
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
+
+    if (name === 'phone' && value !== formData.phone) {
+      resetOtpState()
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSendOtp = async () => {
+    if (!formData.phone.trim()) {
+      setOtpErrorMessage('Enter phone number before requesting OTP.')
+      setOtpSuccessMessage('')
+      return
+    }
+
+    setIsSendingOtp(true)
+    setOtpErrorMessage('')
+    setOtpSuccessMessage('')
+    setOtpVerified(false)
+
+    try {
+      const response = await fetch('/api/otp/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone: phoneWithCountryCode,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Unable to send OTP. Please try again.')
+      }
+
+      setOtpSent(true)
+      setOtpSuccessMessage('OTP sent successfully.')
+    } catch (error) {
+      setOtpErrorMessage((error as Error).message)
+    } finally {
+      setIsSendingOtp(false)
+    }
+  }
+
+  const handleVerifyOtp = async () => {
+    if (!otpCode.trim()) {
+      setOtpErrorMessage('Enter OTP to verify your number.')
+      setOtpSuccessMessage('')
+      return
+    }
+
+    setIsVerifyingOtp(true)
+    setOtpErrorMessage('')
+    setOtpSuccessMessage('')
+
+    try {
+      const response = await fetch('/api/otp/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone: phoneWithCountryCode,
+          code: otpCode.trim(),
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Unable to verify OTP. Please try again.')
+      }
+
+      setOtpVerified(true)
+      setOtpSuccessMessage('Phone number verified successfully.')
+    } catch (error) {
+      setOtpVerified(false)
+      setOtpErrorMessage((error as Error).message)
+    } finally {
+      setIsVerifyingOtp(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!otpVerified) {
+      setErrorMessage('Please verify your phone number with OTP before submitting.')
+      return
+    }
+
     setIsLoading(true)
     setErrorMessage('')
 
     try {
       const { first_name, last_name } = splitFullName(formData.name)
-      const effectiveCountryCode = selectedCountryCode || geoData.country_code || DEFAULT_COUNTRY_CODE
-      const phone = formatPhoneWithCountryCode(formData.phone, effectiveCountryCode)
+      const phone = phoneWithCountryCode
       const payload = {
         name: formData.name.trim(),
         first_name,
@@ -294,6 +408,38 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         throw new Error(data?.error || 'Failed to submit the form. Please try again.')
       }
 
+      const eventId = createEventId()
+
+      try {
+        const metaResponse = await fetch('/api/meta-lead', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email.trim(),
+            eventId,
+          }),
+        })
+
+        if (!metaResponse.ok) {
+          const metaError = await metaResponse.text()
+          console.error('[Meta CAPI] Lead event failed:', metaError)
+        }
+      } catch (metaError) {
+        console.error('[Meta CAPI] Lead event failed:', metaError)
+      }
+
+      trackEvent(
+        'Lead_Created',
+        {
+          content_name: 'Website Lead',
+          value: 1,
+          currency: 'INR',
+        },
+        eventId
+      )
+
       setIsSubmitted(true)
       setFormData({
         name: '',
@@ -303,6 +449,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         purpose: 'Self Use',
         message: '',
       })
+      resetOtpState()
     } catch (error) {
       setErrorMessage((error as Error).message)
     } finally {
@@ -366,6 +513,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                     if (selected) {
                       setSelectedCountryCode(selected.dialCode)
                     }
+                    resetOtpState()
                   }}
                   className="w-full px-3 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
                   aria-label="Country code"
@@ -390,6 +538,51 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                   className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                   placeholder="9876543210"
                 />
+              </div>
+              <div className="mt-3 flex flex-col gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={otpCode}
+                    onChange={(e) => {
+                      setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 8))
+                      setOtpErrorMessage('')
+                    }}
+                    disabled={!otpSent || otpVerified}
+                    className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF] disabled:opacity-60"
+                    placeholder={otpSent ? 'Enter OTP' : 'Send OTP to continue'}
+                    aria-label="OTP code"
+                  />
+                  <div className="flex gap-2">
+                    <MotionButton
+                      type="button"
+                      data-popup-ignore="true"
+                      onClick={handleSendOtp}
+                      disabled={isSendingOtp || !formData.phone.trim()}
+                      className="px-4 py-3 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isSendingOtp ? 'Sending...' : otpSent ? 'Resend OTP' : 'Send OTP'}
+                    </MotionButton>
+                    <MotionButton
+                      type="button"
+                      data-popup-ignore="true"
+                      onClick={handleVerifyOtp}
+                      disabled={isVerifyingOtp || !otpSent || otpVerified || !otpCode.trim()}
+                      className="px-4 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isVerifyingOtp ? 'Verifying...' : otpVerified ? 'Verified' : 'Verify OTP'}
+                    </MotionButton>
+                  </div>
+                </div>
+
+                {otpSuccessMessage ? (
+                  <p className="text-sm text-green-700">{otpSuccessMessage}</p>
+                ) : null}
+                {otpErrorMessage ? (
+                  <p className="text-sm text-red-600">{otpErrorMessage}</p>
+                ) : null}
               </div>
             </div>
 

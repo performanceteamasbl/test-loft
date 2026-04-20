@@ -23,6 +23,7 @@ export default function Home() {
 
     if (trigger.dataset.popupIgnore === 'true') return
     if (trigger.type === 'submit') return
+    if (trigger.closest('form')) return
 
     window.dispatchEvent(new Event('open-interest-form-popup'))
   }, [])
