@@ -369,6 +369,31 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     try {
       const { first_name, last_name } = splitFullName(formData.name)
       const phone = phoneWithCountryCode
+      const eventId = createEventId()
+
+      trackEvent(
+        'Lead_Created',
+        {
+          content_name: 'Website Lead',
+          value: 1,
+          currency: 'INR',
+        },
+        eventId
+      )
+
+      void fetch('/api/meta-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email.trim(),
+          eventId,
+        }),
+      }).catch((metaError) => {
+        console.error('[Meta CAPI] Lead event failed:', metaError)
+      })
+
       const payload = {
         name: formData.name.trim(),
         first_name,
@@ -407,38 +432,6 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
       if (!response.ok) {
         throw new Error(data?.error || 'Failed to submit the form. Please try again.')
       }
-
-      const eventId = createEventId()
-
-      try {
-        const metaResponse = await fetch('/api/meta-lead', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email.trim(),
-            eventId,
-          }),
-        })
-
-        if (!metaResponse.ok) {
-          const metaError = await metaResponse.text()
-          console.error('[Meta CAPI] Lead event failed:', metaError)
-        }
-      } catch (metaError) {
-        console.error('[Meta CAPI] Lead event failed:', metaError)
-      }
-
-      trackEvent(
-        'Lead_Created',
-        {
-          content_name: 'Website Lead',
-          value: 1,
-          currency: 'INR',
-        },
-        eventId
-      )
 
       setIsSubmitted(true)
       setFormData({
