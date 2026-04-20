@@ -372,7 +372,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
       const eventId = createEventId()
 
       trackEvent(
-        'Lead_Created',
+        'form_submit',
         {
           content_name: 'Website Lead',
           value: 1,
