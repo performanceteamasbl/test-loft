@@ -83,7 +83,7 @@ export const trackGoogleLeadCreated = ({
     utm_term,
   })
 
-  window.gtag('event', 'conversion', {
+  window.gtag('event', 'LEAD_CREATED', {
     send_to: `${GOOGLE_ADS_ID}/${GOOGLE_ADS_LEAD_CONVERSION_LABEL}`,
     transaction_id: eventId,
     ...eventParams,
