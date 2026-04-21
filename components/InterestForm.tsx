@@ -99,7 +99,6 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   const [otpCode, setOtpCode] = useState('')
   const [otpStepActive, setOtpStepActive] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
-  const [otpVerified, setOtpVerified] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
   const [formData, setFormData] = useState<FormState>({
     name: '',
@@ -272,7 +271,6 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   const resetOtpState = () => {
     setOtpStepActive(false)
     setOtpSent(false)
-    setOtpVerified(false)
     setOtpCode('')
     setResendCooldown(0)
     setOtpErrorMessage('')
@@ -299,7 +297,6 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     setIsSendingOtp(true)
     setOtpErrorMessage('')
     setOtpSuccessMessage('')
-    setOtpVerified(false)
 
     try {
       const response = await fetch('/api/otp/send', {
@@ -344,45 +341,6 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     await requestOtp()
   }
 
-  const handleVerifyOtp = async () => {
-    if (!otpCode.trim()) {
-      setOtpErrorMessage('Enter OTP to verify your number.')
-      setOtpSuccessMessage('')
-      return
-    }
-
-    setIsVerifyingOtp(true)
-    setOtpErrorMessage('')
-    setOtpSuccessMessage('')
-
-    try {
-      const response = await fetch('/api/otp/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          phone: phoneWithCountryCode,
-          code: otpCode.trim(),
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data?.error || 'Unable to verify OTP. Please try again.')
-      }
-
-      setOtpVerified(true)
-      setOtpSuccessMessage('Phone number verified successfully.')
-    } catch (error) {
-      setOtpVerified(false)
-      setOtpErrorMessage((error as Error).message)
-    } finally {
-      setIsVerifyingOtp(false)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -394,40 +352,43 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
       return
     }
 
-    if (!otpVerified) {
-      setErrorMessage('Please verify your phone number with OTP before submitting.')
+    if (!otpStepActive || !otpSent) {
+      setErrorMessage('Please request OTP before submitting.')
+      return
+    }
+
+    if (!otpCode.trim()) {
+      setErrorMessage('Please enter OTP before submitting.')
       return
     }
 
     setIsLoading(true)
     setErrorMessage('')
+    setOtpErrorMessage('')
+    setOtpSuccessMessage('')
 
     try {
-      const { first_name, last_name } = splitFullName(formData.name)
-      const phone = phoneWithCountryCode
-      const eventId = createEventId()
-
-      trackEvent(
-        'form_submit',
-        {
-          content_name: 'Website Lead',
-          value: 1,
-          currency: 'INR',
-        },
-        eventId
-      )
-
-      void fetch('/api/meta-lead', {
+      setIsVerifyingOtp(true)
+      const verifyResponse = await fetch('/api/otp/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          eventId,
+          phone: phoneWithCountryCode,
+          code: otpCode.trim(),
         }),
-      }).catch((metaError) => {
-        console.error('[Meta CAPI] Lead event failed:', metaError)
       })
+
+      const verifyData = await verifyResponse.json()
+      if (!verifyResponse.ok) {
+        throw new Error(verifyData?.error || 'Unable to verify OTP. Please try again.')
+      }
+      setOtpSuccessMessage('Phone number verified successfully.')
+
+      const { first_name, last_name } = splitFullName(formData.name)
+      const phone = phoneWithCountryCode
+      const eventId = createEventId()
 
       const payload = {
         name: formData.name.trim(),
@@ -466,6 +427,28 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         throw new Error(data?.error || 'Failed to submit the form. Please try again.')
       }
 
+      trackEvent(
+        'LEAD_CREATED',
+        {
+          content_name: 'Website Lead',
+          value: 1,
+          currency: 'INR',
+        },
+        eventId
+      )
+
+      void fetch('/api/meta-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventId,
+        }),
+      }).catch((metaError) => {
+        console.error('[Meta CAPI] Lead event failed:', metaError)
+      })
+
       setIsSubmitted(true)
       setFormData({
         name: '',
@@ -475,25 +458,31 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
       })
       resetOtpState()
     } catch (error) {
-      setErrorMessage((error as Error).message)
+      const message = (error as Error).message
+      if (message.toLowerCase().includes('otp') || message.toLowerCase().includes('verify')) {
+        setOtpErrorMessage(message)
+      } else {
+        setErrorMessage(message)
+      }
     } finally {
+      setIsVerifyingOtp(false)
       setIsLoading(false)
     }
   }
 
   return (
-    <section id={asPopup ? undefined : 'contact'} ref={ref} className={asPopup ? 'bg-[#FFFFFF]' : 'py-24 px-6 bg-[#FFFFFF]'}>
-      <div className="max-w-2xl mx-auto">
+    <section id={asPopup ? undefined : 'contact'} ref={ref} className={asPopup ? 'bg-[#FFFFFF]' : 'py-10 px-4 sm:px-4 bg-[#FFFFFF]'}>
+      <div className={asPopup ? 'w-full' : 'max-w-md mx-auto'}>
         {/* Heading */}
         <div
-          className={`text-center mb-12 transition-all duration-1000 ${
+          className={`text-center mb-6 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <h2 className="font-cormorant italic text-4xl sm:text-5xl md:text-6xl text-[#9D5088] mb-4">
+          <h2 className="font-cormorant italic text-2xl sm:text-3xl md:text-4xl text-[#9D5088] mb-2">
             Are you interested in this Property?
           </h2>
-          <p className="text-[#000000] font-montserrat text-sm uppercase tracking-wider">
+          <p className="text-[#000000] font-montserrat text-xs uppercase tracking-wide">
             Connect with our team for a personalised walkthrough
           </p>
         </div>
@@ -502,7 +491,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         {!isSubmitted ? (
           <form
             onSubmit={handleSubmit}
-            className={`space-y-6 transition-all duration-1000 delay-200 ${
+            className={`space-y-3 transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
@@ -514,11 +503,11 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -60, opacity: 0 }}
                   transition={{ duration: 0.35, ease: 'easeInOut' }}
-                  className="space-y-6"
+                  className="space-y-3"
                 >
                   {/* Name */}
                   <div>
-                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
                       Full Name
                     </label>
                     <input
@@ -527,17 +516,17 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                       placeholder="Your name"
                     />
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
                       Phone Number
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] gap-2">
                       <select
                         name="country_code"
                         value={selectedCountryShort}
@@ -549,7 +538,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                           }
                           resetOtpState()
                         }}
-                        className="w-full px-3 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
+                        className="w-full px-2.5 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56]"
                         aria-label="Country code"
                       >
                         {[
@@ -569,7 +558,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                        className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                         placeholder="9876543210"
                       />
                     </div>
@@ -577,14 +566,14 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
                   {/* Budget */}
                   <div>
-                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
                       Budget
                     </label>
                     <select
                       name="budget"
                       value={formData.budget}
                       onChange={handleChange}
-                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
                     >
                       <option value="">Select budget</option>
                       <option value="Below 1.5 Cr">Below 1.5 Cr</option>
@@ -596,14 +585,14 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
                   {/* Purpose */}
                   <div>
-                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
                       Purpose
                     </label>
                     <select
                       name="purpose"
                       value={formData.purpose}
                       onChange={handleChange}
-                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
+                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56]"
                     >
                       <option value="Self Use">Self Use</option>
                       <option value="Investment">Investment</option>
@@ -615,7 +604,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                     data-popup-ignore="true"
                     onClick={handleStartOtpFlow}
                     disabled={isSendingOtp}
-                    className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="w-full py-2.5 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isSendingOtp ? 'Sending OTP...' : 'Get OTP'}
                   </MotionButton>
@@ -627,13 +616,13 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -60, opacity: 0 }}
                   transition={{ duration: 0.35, ease: 'easeInOut' }}
-                  className="space-y-4"
+                  className="space-y-2.5"
                 >
-                  <p className="text-sm text-[#000000] font-lato">
+                  <p className="text-xs text-[#000000] font-lato">
                     OTP sent to {phoneWithCountryCode}. Verify to enable submit.
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
                     <input
                       type="text"
                       inputMode="numeric"
@@ -643,8 +632,8 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                         setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 8))
                         setOtpErrorMessage('')
                       }}
-                      disabled={!otpSent || otpVerified}
-                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF] disabled:opacity-60"
+                      disabled={!otpSent}
+                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF] disabled:opacity-60"
                       placeholder={otpSent ? 'Enter OTP' : 'Send OTP to continue'}
                       aria-label="OTP code"
                     />
@@ -654,18 +643,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                         data-popup-ignore="true"
                         onClick={handleResendOtp}
                         disabled={isSendingOtp || resendCooldown > 0}
-                        className="px-4 py-3 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="px-3 py-2 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-[11px] uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : isSendingOtp ? 'Sending...' : 'Resend OTP'}
-                      </MotionButton>
-                      <MotionButton
-                        type="button"
-                        data-popup-ignore="true"
-                        onClick={handleVerifyOtp}
-                        disabled={isVerifyingOtp || !otpSent || otpVerified || !otpCode.trim()}
-                        className="px-4 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-                      >
-                        {isVerifyingOtp ? 'Verifying...' : otpVerified ? 'Verified' : 'Verify OTP'}
                       </MotionButton>
                     </div>
                   </div>
@@ -673,10 +653,10 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                   <MotionButton
                     type="submit"
                     data-track-submit="true"
-                    disabled={!otpVerified || isLoading}
-                    className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                    disabled={!otpCode.trim() || isLoading || isVerifyingOtp}
+                    className="w-full py-2.5 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {isLoading ? 'Sending...' : 'Submit'}
+                    {isVerifyingOtp ? 'Verifying OTP...' : isLoading ? 'Sending...' : 'Submit'}
                   </MotionButton>
                 </motion.div>
               )}
@@ -694,23 +674,23 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
             ) : null}
 
             {/* Reassurance Text */}
-            <p className="text-center text-[#000000] font-lato text-sm">
+            <p className="text-center text-[#000000] font-lato text-xs">
               No spam. Our team will reach out within 24 hours.
             </p>
           </form>
         ) : (
           <div
-            className={`text-center py-12 transition-all duration-1000 ${
+            className={`text-center py-8 transition-all duration-1000 ${
               isSubmitted ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#AE8F56] mb-6">
-              <svg className="w-8 h-8 text-[#9D5088]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#AE8F56] mb-4">
+              <svg className="w-6 h-6 text-[#9D5088]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="font-cormorant italic text-3xl text-[#9D5088] mb-2">Thank You!</h3>
-            <p className="text-[#000000] font-lato">
+            <h3 className="font-cormorant italic text-2xl text-[#9D5088] mb-1">Thank You!</h3>
+            <p className="text-[#000000] font-lato text-sm">
               We&apos;ll reach out to you shortly to arrange a personalized walkthrough.
             </p>
           </div>

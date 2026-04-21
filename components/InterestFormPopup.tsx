@@ -27,8 +27,8 @@ export default function InterestFormPopup() {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/60 p-3 sm:p-4 md:p-8 overflow-y-auto">
-      <div className="mx-auto mt-4 sm:mt-8 max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-4 md:p-6">
-        <div className="mb-2 flex justify-end">
+      <div className="mx-auto mt-4 sm:mt-8 max-h-[92vh] w-full sm:w-1/3 max-w-3xl overflow-y-auto rounded-lg bg-white p-4 md:p-6">
+        <div className="mb-2 flex w-full justify-end">
           <MotionButton
             type="button"
             onClick={() => setIsOpen(false)}
