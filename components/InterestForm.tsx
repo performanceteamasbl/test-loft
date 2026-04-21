@@ -386,6 +386,14 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    const nativeSubmitEvent = e.nativeEvent as SubmitEvent
+    const submitter = nativeSubmitEvent.submitter as HTMLButtonElement | null
+    const isTrackedSubmitClick = submitter?.dataset.trackSubmit === 'true'
+
+    if (!isTrackedSubmitClick) {
+      return
+    }
+
     if (!otpVerified) {
       setErrorMessage('Please verify your phone number with OTP before submitting.')
       return
@@ -664,6 +672,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
                   <MotionButton
                     type="submit"
+                    data-track-submit="true"
                     disabled={!otpVerified || isLoading}
                     className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
                   >
