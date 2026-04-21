@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MotionButton } from '@/components/ui/hover-effects'
 import { trackEvent } from '@/lib/fpixel'
+import { trackGoogleLeadCreated } from '@/lib/google-ads'
 import { buildMetaLeadPayload, getMetaBrowserTracking } from '@/lib/meta-tracking'
 
 type FormState = {
@@ -446,15 +447,44 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         throw new Error(data?.error || 'Failed to submit the form. Please try again.')
       }
 
-      trackEvent(
-        'LEAD_CREATED',
-        {
-          content_name: 'Website Lead',
-          value: 1,
-          currency: 'INR',
-        },
-        eventId
-      )
+      const leadEventParams = {
+        content_name: 'Website Lead',
+        value: 1,
+        currency: 'INR',
+        project: PROJECT,
+        configuration: CONFIGURATION,
+        budget: formData.budget,
+        purpose: formData.purpose,
+        source: trackingData.source,
+        page_url: trackingData.page_url,
+        referrer: trackingData.referrer,
+        utm_source: trackingData.utm_source,
+        utm_medium: trackingData.utm_medium,
+        utm_campaign: trackingData.utm_campaign,
+        utm_content: trackingData.utm_content,
+        utm_term: trackingData.utm_term,
+      }
+
+      trackEvent('LEAD_CREATED', leadEventParams, eventId)
+
+      trackGoogleLeadCreated({
+        eventId,
+        contentName: leadEventParams.content_name,
+        value: leadEventParams.value,
+        currency: leadEventParams.currency,
+        project: leadEventParams.project,
+        configuration: leadEventParams.configuration,
+        budget: leadEventParams.budget,
+        purpose: leadEventParams.purpose,
+        source: leadEventParams.source,
+        pageUrl: leadEventParams.page_url,
+        referrer: leadEventParams.referrer,
+        utm_source: leadEventParams.utm_source,
+        utm_medium: leadEventParams.utm_medium,
+        utm_campaign: leadEventParams.utm_campaign,
+        utm_content: leadEventParams.utm_content,
+        utm_term: leadEventParams.utm_term,
+      })
 
       void fetch('/api/meta-lead', {
         method: 'POST',
