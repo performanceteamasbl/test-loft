@@ -47,8 +47,8 @@ export default function InterestFormPopup() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/60 p-3 sm:p-4 md:p-8">
-      <div className="relative mx-auto mt-4 sm:mt-8 w-full max-w-6xl rounded-lg bg-[#F6F6F6] p-5 sm:p-7 md:p-10">
+    <div className="fixed flex justify-center items-center inset-0 z-[100] overflow-y-auto bg-black/60 p-3 sm:p-4 md:p-8">
+      <div className="relative mx-auto w-full max-w-6xl rounded-lg bg-[#F6F6F6] p-5 sm:p-7 md:p-10">
         <button
           type="button"
           onClick={() => setIsOpen(false)}
@@ -60,7 +60,7 @@ export default function InterestFormPopup() {
         </button>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-10">
-          <div className="pt-2 md:pt-10">
+          <div className="flex flex-col justify-center gap-4" >
             <h2 className="font-cormorant text-4xl leading-[1.15] text-[#2E2F35] sm:text-5xl">
               {popupTitle}
             </h2>

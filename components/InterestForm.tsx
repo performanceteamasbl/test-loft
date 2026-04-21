@@ -11,7 +11,7 @@ type FormState = {
   name: string
   phone: string
   budget: string
-  purpose: 'Self Use' | 'Investment'
+  purpose: '' | 'Self Use' | 'Investment'
 }
 
 type TrackingState = {
@@ -108,7 +108,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     name: '',
     phone: '',
     budget: '',
-    purpose: 'Self Use',
+    purpose: '',
   })
   const [trackingData, setTrackingData] = useState<TrackingState>({
     utm_source: '',
@@ -347,7 +347,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   }
 
   const handleStartOtpFlow = async () => {
-    if (!formData.name.trim() || !formData.phone.trim() || !formData.budget.trim()) {
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.budget.trim() || !formData.purpose.trim()) {
       setOtpErrorMessage('Please complete required details before requesting OTP.')
       setOtpSuccessMessage('')
       return
@@ -506,7 +506,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         name: '',
         phone: '',
         budget: '',
-        purpose: 'Self Use',
+        purpose: '',
       })
       resetOtpState()
     } catch (error) {
@@ -648,6 +648,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                       onChange={handleChange}
                       className={selectClass}
                     >
+                      <option value="">Select your preference</option>
                       <option value="Self Use">Self Use</option>
                       <option value="Investment">Investment</option>
                     </select>
