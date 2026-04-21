@@ -75,7 +75,11 @@ export default function Header() {
         </nav>
 
         <div className="hidden sm:block">
-          <MotionButton onClick={openInterestFormPopup} className="px-6 py-2 border-2 border-[#FDE68A] bg-[#FDE68A] text-[#9D5088] hover:bg-transparent hover:text-[#AE8F56] hover:border=[#AE8F56] transition-all duration-300 text-sm font-montserrat uppercase tracking-wide">
+          <MotionButton
+            data-popup-ignore="true"
+            onClick={() => openInterestFormPopup({ sourceText: 'Book a Site Visit' })}
+            className="px-6 py-2 border-2 border-[#FDE68A] bg-[#FDE68A] text-[#9D5088] hover:bg-transparent hover:text-[#AE8F56] hover:border=[#AE8F56] transition-all duration-300 text-sm font-montserrat uppercase tracking-wide"
+          >
             Book a Site Visit
           </MotionButton>
         </div>
@@ -119,9 +123,10 @@ export default function Header() {
                 </Link>
               ))}
               <MotionButton
+                data-popup-ignore="true"
                 onClick={() => {
                   setIsMenuOpen(false)
-                  openInterestFormPopup()
+                  openInterestFormPopup({ sourceText: 'Book a Site Visit' })
                 }}
                 className="mt-2 w-full px-6 py-2 border-2 border-[#AE8F56] text-[#AE8F56] hover:bg-[#AE8F56] hover:text-[#9D5088] transition-all duration-300 text-sm font-montserrat uppercase tracking-wide"
               >

@@ -73,7 +73,11 @@ export default function PaymentPlan() {
 
         {/* CTA */}
         <div className="text-center">
-          <MotionButton onClick={openInterestFormPopup} className="inline-flex items-center gap-3 px-6 sm:px-8 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300">
+          <MotionButton
+            data-popup-ignore="true"
+            onClick={() => openInterestFormPopup({ sourceText: 'Explore Payment Structure' })}
+            className="inline-flex items-center gap-3 px-6 sm:px-8 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300"
+          >
             <span>Explore Payment Structure</span>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -62,10 +62,18 @@ export default function Hero() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <MotionButton onClick={openInterestFormPopup} className="w-full sm:w-auto px-6 sm:px-10 py-4 bg-[#FDE68A] text-[#854D0E] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 hover:shadow-lg hover:shadow-[#AE8F56]/20">
+          <MotionButton
+            data-popup-ignore="true"
+            onClick={() => openInterestFormPopup({ sourceText: 'Book a Site Visit' })}
+            className="w-full sm:w-auto px-6 sm:px-10 py-4 bg-[#FDE68A] text-[#854D0E] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 hover:shadow-lg hover:shadow-[#AE8F56]/20"
+          >
             Book a Site Visit
           </MotionButton>
-          <MotionButton onClick={openInterestFormPopup} className="w-full sm:w-auto px-6 sm:px-10 py-4 border-2 border-[#FDE68A] text-[#FDE68A] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300">
+          <MotionButton
+            data-popup-ignore="true"
+            onClick={() => openInterestFormPopup({ sourceText: 'Download Brochure' })}
+            className="w-full sm:w-auto px-6 sm:px-10 py-4 border-2 border-[#FDE68A] text-[#FDE68A] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300"
+          >
             Download Brochure
           </MotionButton>
         </div>

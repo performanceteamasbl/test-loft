@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MotionButton } from '@/components/ui/hover-effects'
 import { trackEvent } from '@/lib/fpixel'
+import { buildMetaLeadPayload, getMetaBrowserTracking } from '@/lib/meta-tracking'
 
 type FormState = {
   name: string
@@ -25,7 +26,9 @@ type TrackingState = {
 
 type GeoState = {
   city: string
+  state: string
   country: string
+  zip: string
   country_code: string
 }
 
@@ -118,7 +121,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   })
   const [geoData, setGeoData] = useState<GeoState>({
     city: '',
+    state: '',
     country: '',
+    zip: '',
     country_code: DEFAULT_COUNTRY_CODE,
   })
   const [selectedCountryShort, setSelectedCountryShort] = useState('IN')
@@ -149,13 +154,13 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   }, [asPopup])
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const utm_source = params.get('utm_source') ?? ''
-    const utm_medium = params.get('utm_medium') ?? ''
-    const utm_campaign = params.get('utm_campaign') ?? ''
-    const utm_content = params.get('utm_content') ?? ''
-    const utm_term = params.get('utm_term') ?? ''
-    const page_url = window.location.href
+    const browserTracking = getMetaBrowserTracking()
+    const utm_source = browserTracking.utm_source
+    const utm_medium = browserTracking.utm_medium
+    const utm_campaign = browserTracking.utm_campaign
+    const utm_content = browserTracking.utm_content
+    const utm_term = browserTracking.utm_term
+    const page_url = browserTracking.eventSourceUrl || window.location.href
     const referrer = document.referrer || ''
     const source = utm_source || getReferrerDomain(referrer) || 'direct'
 
@@ -181,7 +186,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
         setGeoData({
           city: data?.city || '',
-          country: detectedShort,
+          state: data?.region || data?.region_code || '',
+          country: data?.country_name || '',
+          zip: data?.postal || '',
           country_code: detectedDialCode,
         })
         setSelectedCountryCode(detectedDialCode)
@@ -267,6 +274,18 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
   const effectiveCountryCode = selectedCountryCode || geoData.country_code || DEFAULT_COUNTRY_CODE
   const phoneWithCountryCode = formatPhoneWithCountryCode(formData.phone, effectiveCountryCode)
+  const selectedCountryName =
+    countryOptions.find((option) => option.short === selectedCountryShort)?.name || geoData.country || ''
+  const textInputClass = asPopup
+    ? 'w-full px-0 py-2.5 bg-transparent border-0 border-b border-[#C7C7C7] text-[#3C3C3C] text-[18px] focus:outline-none focus:border-[#9D5088] placeholder-[#8F8F8F]'
+    : 'w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]'
+  const selectClass = asPopup
+    ? 'w-full px-0 py-2.5 bg-transparent border-0 border-b border-[#C7C7C7] text-[#3C3C3C] text-[18px] focus:outline-none focus:border-[#9D5088]'
+    : 'w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56]'
+  const labelClass = asPopup
+    ? 'sr-only'
+    : 'block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1'
+  const formSpacingClass = asPopup ? 'space-y-4' : 'space-y-3'
 
   const resetOtpState = () => {
     setOtpStepActive(false)
@@ -407,7 +426,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         page_url: trackingData.page_url,
         referrer: trackingData.referrer,
         city: geoData.city,
-        country: selectedCountryShort || geoData.country,
+        country: selectedCountryName,
         country_code: normalizeCountryCode(effectiveCountryCode),
         source: trackingData.source,
       }
@@ -442,9 +461,21 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          eventId,
-        }),
+        body: JSON.stringify(
+          buildMetaLeadPayload({
+            eventId,
+            tracking: getMetaBrowserTracking(),
+            user: {
+              name: formData.name,
+              phone: formData.phone,
+              countryCode: effectiveCountryCode,
+              city: geoData.city,
+              state: geoData.state,
+              country: selectedCountryName,
+              zip: geoData.zip,
+            },
+          })
+        ),
       }).catch((metaError) => {
         console.error('[Meta CAPI] Lead event failed:', metaError)
       })
@@ -471,27 +502,29 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   }
 
   return (
-    <section id={asPopup ? undefined : 'contact'} ref={ref} className={asPopup ? 'bg-[#FFFFFF]' : 'py-10 px-4 sm:px-4 bg-[#FFFFFF]'}>
+    <section id={asPopup ? undefined : 'contact'} ref={ref} className={asPopup ? 'bg-transparent' : 'py-10 px-4 sm:px-4 bg-[#FFFFFF]'}>
       <div className={asPopup ? 'w-full' : 'max-w-md mx-auto'}>
         {/* Heading */}
-        <div
-          className={`text-center mb-6 transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}
-        >
-          <h2 className="font-cormorant italic text-2xl sm:text-3xl md:text-4xl text-[#9D5088] mb-2">
-            Are you interested in this Property?
-          </h2>
-          <p className="text-[#000000] font-montserrat text-xs uppercase tracking-wide">
-            Connect with our team for a personalised walkthrough
-          </p>
-        </div>
+        {!asPopup ? (
+          <div
+            className={`text-center mb-6 transition-all duration-1000 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
+            <h2 className="font-cormorant italic text-2xl sm:text-3xl md:text-4xl text-[#9D5088] mb-2">
+              Are you interested in this Property?
+            </h2>
+            <p className="text-[#000000] font-montserrat text-xs uppercase tracking-wide">
+              Connect with our team for a personalised walkthrough
+            </p>
+          </div>
+        ) : null}
 
         {/* Form */}
         {!isSubmitted ? (
           <form
             onSubmit={handleSubmit}
-            className={`space-y-3 transition-all duration-1000 delay-200 ${
+            className={`${formSpacingClass} transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
@@ -503,11 +536,11 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -60, opacity: 0 }}
                   transition={{ duration: 0.35, ease: 'easeInOut' }}
-                  className="space-y-3"
+                  className={formSpacingClass}
                 >
                   {/* Name */}
                   <div>
-                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
+                    <label className={labelClass}>
                       Full Name
                     </label>
                     <input
@@ -516,17 +549,17 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                      className={textInputClass}
                       placeholder="Your name"
                     />
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
+                    <label className={labelClass}>
                       Phone Number
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-[96px_1fr] gap-3">
                       <select
                         name="country_code"
                         value={selectedCountryShort}
@@ -538,7 +571,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                           }
                           resetOtpState()
                         }}
-                        className="w-full px-2.5 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56]"
+                        className={selectClass}
                         aria-label="Country code"
                       >
                         {[
@@ -558,7 +591,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                        className={textInputClass}
                         placeholder="9876543210"
                       />
                     </div>
@@ -566,14 +599,14 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
                   {/* Budget */}
                   <div>
-                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
+                    <label className={labelClass}>
                       Budget
                     </label>
                     <select
                       name="budget"
                       value={formData.budget}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                      className={selectClass}
                     >
                       <option value="">Select budget</option>
                       <option value="Below 1.5 Cr">Below 1.5 Cr</option>
@@ -585,14 +618,14 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
                   {/* Purpose */}
                   <div>
-                    <label className="block font-montserrat text-xs uppercase tracking-wide text-[#9D5088] mb-1">
+                    <label className={labelClass}>
                       Purpose
                     </label>
                     <select
                       name="purpose"
                       value={formData.purpose}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56]"
+                      className={selectClass}
                     >
                       <option value="Self Use">Self Use</option>
                       <option value="Investment">Investment</option>
@@ -604,7 +637,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                     data-popup-ignore="true"
                     onClick={handleStartOtpFlow}
                     disabled={isSendingOtp}
-                    className="w-full py-2.5 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                    className={asPopup
+                      ? 'w-full rounded-full bg-[#9D5088] py-3 text-[#FFFFFF] font-montserrat text-lg tracking-wide hover:bg-[#8B4678] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70'
+                      : 'w-full py-2.5 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70'}
                   >
                     {isSendingOtp ? 'Sending OTP...' : 'Get OTP'}
                   </MotionButton>
@@ -616,9 +651,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -60, opacity: 0 }}
                   transition={{ duration: 0.35, ease: 'easeInOut' }}
-                  className="space-y-2.5"
+                  className={asPopup ? 'space-y-4' : 'space-y-2.5'}
                 >
-                  <p className="text-xs text-[#000000] font-lato">
+                  <p className={asPopup ? 'text-sm text-[#7A7A7A] font-lato' : 'text-xs text-[#000000] font-lato'}>
                     OTP sent to {phoneWithCountryCode}. Verify to enable submit.
                   </p>
 
@@ -633,7 +668,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                         setOtpErrorMessage('')
                       }}
                       disabled={!otpSent}
-                      className="w-full px-3 py-2 bg-white border-2 border-[#9D5088] text-[#9D5088] text-sm focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF] disabled:opacity-60"
+                      className={textInputClass}
                       placeholder={otpSent ? 'Enter OTP' : 'Send OTP to continue'}
                       aria-label="OTP code"
                     />
@@ -643,7 +678,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                         data-popup-ignore="true"
                         onClick={handleResendOtp}
                         disabled={isSendingOtp || resendCooldown > 0}
-                        className="px-3 py-2 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-[11px] uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className={asPopup
+                          ? 'px-4 py-2 rounded-full bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs tracking-wide hover:bg-[#8B4678] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed'
+                          : 'px-3 py-2 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-[11px] uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed'}
                       >
                         {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : isSendingOtp ? 'Sending...' : 'Resend OTP'}
                       </MotionButton>
@@ -654,7 +691,9 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
                     type="submit"
                     data-track-submit="true"
                     disabled={!otpCode.trim() || isLoading || isVerifyingOtp}
-                    className="w-full py-2.5 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                    className={asPopup
+                      ? 'w-full rounded-full bg-[#9D5088] py-3 text-[#FFFFFF] font-montserrat text-lg tracking-wide hover:bg-[#8B4678] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70'
+                      : 'w-full py-2.5 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70'}
                   >
                     {isVerifyingOtp ? 'Verifying OTP...' : isLoading ? 'Sending...' : 'Submit'}
                   </MotionButton>
@@ -674,7 +713,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
             ) : null}
 
             {/* Reassurance Text */}
-            <p className="text-center text-[#000000] font-lato text-xs">
+            <p className={asPopup ? 'text-left text-[#868686] font-lato text-sm' : 'text-center text-[#000000] font-lato text-xs'}>
               No spam. Our team will reach out within 24 hours.
             </p>
           </form>

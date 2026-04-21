@@ -1,16 +1,14 @@
-import { createHash } from 'node:crypto'
+import {
+  buildMetaCustomData,
+  buildMetaUserData,
+  normalizeEventSourceUrl,
+  type MetaLeadInput,
+} from '@/lib/server/meta-capi'
 
 export const runtime = 'nodejs'
 
-type MetaLeadBody = {
-  email?: string
-  eventId?: string
-}
-
-const toSha256 = (value: string) => createHash('sha256').update(value).digest('hex')
-
 export async function POST(req: Request) {
-  let body: MetaLeadBody
+  let body: Partial<MetaLeadInput>
 
   try {
     body = await req.json()
@@ -22,7 +20,6 @@ export async function POST(req: Request) {
   }
 
   const eventId = body?.eventId?.trim()
-  const normalizedEmail = body?.email?.trim().toLowerCase()
 
   if (!eventId) {
     return new Response(JSON.stringify({ error: 'eventId is required.' }), {
@@ -41,9 +38,36 @@ export async function POST(req: Request) {
     })
   }
 
-  const user_data: Record<string, string> = {}
-  if (normalizedEmail) {
-    user_data.em = toSha256(normalizedEmail)
+  const metaLeadInput: MetaLeadInput = {
+    eventId,
+    email: body.email,
+    name: body.name,
+    phone: body.phone,
+    city: body.city,
+    state: body.state,
+    country: body.country,
+    zip: body.zip,
+    fbp: body.fbp,
+    fbc: body.fbc,
+    eventSourceUrl: body.eventSourceUrl,
+    utm_source: body.utm_source,
+    utm_medium: body.utm_medium,
+    utm_campaign: body.utm_campaign,
+    utm_term: body.utm_term,
+    utm_content: body.utm_content,
+  }
+
+  const user_data = buildMetaUserData(metaLeadInput, req)
+  const custom_data = buildMetaCustomData(metaLeadInput)
+  const event_source_url = normalizeEventSourceUrl(metaLeadInput.eventSourceUrl)
+  const eventPayload = {
+    event_name: 'LEAD_CREATED',
+    event_time: Math.floor(Date.now() / 1000),
+    event_id: eventId,
+    action_source: 'website',
+    user_data,
+    ...(event_source_url ? { event_source_url } : {}),
+    ...(Object.keys(custom_data).length > 0 ? { custom_data } : {}),
   }
 
   try {
@@ -55,15 +79,7 @@ export async function POST(req: Request) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          data: [
-            {
-              event_name: 'LEAD_CREATED',
-              event_time: Math.floor(Date.now() / 1000),
-              event_id: eventId,
-              action_source: 'website',
-              user_data,
-            },
-          ],
+          data: [eventPayload],
         }),
       }
     )

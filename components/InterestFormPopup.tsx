@@ -1,23 +1,44 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import InterestForm from '@/components/InterestForm'
-import { MotionButton } from '@/components/ui/hover-effects'
+import loftLogoForm from '../assets/Loft-logo-form.webp'
+
+const getPopupTitleBySource = (sourceText?: string) => {
+  const source = (sourceText || '').toLowerCase().trim()
+  if (!source) return 'Download Brochure'
+
+  if (source.includes('site visit')) return 'Book Site Visit'
+  if (source.includes('floor')) return 'Get Floor Plans'
+  if (source.includes('payment')) return 'Get Payment Plan'
+  if (source.includes('amenit')) return 'Explore Amenities'
+  if (source.includes('price')) return 'Get Price Details'
+  if (source.includes('brochure')) return 'Download Brochure'
+
+  return sourceText || 'Download Brochure'
+}
 
 export default function InterestFormPopup() {
   const [isOpen, setIsOpen] = useState(false)
+  const [popupTitle, setPopupTitle] = useState('Download Brochure')
 
   useEffect(() => {
-    const openPopup = () => setIsOpen(true)
-    const timer = setTimeout(() => {
+    const openPopup = (event?: Event) => {
+      const customEvent = event as CustomEvent<{ sourceText?: string }> | undefined
+      setPopupTitle(getPopupTitleBySource(customEvent?.detail?.sourceText))
       setIsOpen(true)
+    }
+
+    const timer = setTimeout(() => {
+      openPopup()
     }, 5000)
 
-    window.addEventListener('open-interest-form-popup', openPopup)
+    window.addEventListener('open-interest-form-popup', openPopup as EventListener)
 
     return () => {
       clearTimeout(timer)
-      window.removeEventListener('open-interest-form-popup', openPopup)
+      window.removeEventListener('open-interest-form-popup', openPopup as EventListener)
     }
   }, [])
 
@@ -26,20 +47,37 @@ export default function InterestFormPopup() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/60 p-3 sm:p-4 md:p-8 overflow-y-auto">
-      <div className="mx-auto mt-4 sm:mt-8 max-h-[92vh] w-full sm:w-1/3 max-w-3xl overflow-y-auto rounded-lg bg-white p-4 md:p-6">
-        <div className="mb-2 flex w-full justify-end">
-          <MotionButton
-            type="button"
-            onClick={() => setIsOpen(false)}
-            data-popup-ignore="true"
-            className="rounded border border-[#9D5088] px-3 py-1 text-sm text-[#9D5088] hover:bg-[#FDE68A]"
-            aria-label="Close popup"
-          >
-            Close
-          </MotionButton>
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/60 p-3 sm:p-4 md:p-8">
+      <div className="relative mx-auto mt-4 sm:mt-8 w-full max-w-6xl rounded-lg bg-[#F6F6F6] p-5 sm:p-7 md:p-10">
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          data-popup-ignore="true"
+          className="absolute right-4 top-3 text-4xl leading-none text-[#2F2F2F] hover:text-[#9D5088]"
+          aria-label="Close popup"
+        >
+          ×
+        </button>
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[0.9fr_1.1fr] md:gap-10">
+          <div className="pt-2 md:pt-10">
+            <h2 className="font-cormorant text-4xl leading-[1.15] text-[#2E2F35] sm:text-5xl">
+              {popupTitle}
+            </h2>
+            <div className="mt-8">
+              <Image
+                src={loftLogoForm}
+                alt="Loft Logo"
+                className="h-auto w-44 object-contain"
+                priority
+              />
+            </div>
+          </div>
+
+          <div className="pt-8 md:pt-10">
+            <InterestForm asPopup />
+          </div>
         </div>
-        <InterestForm asPopup />
       </div>
     </div>
   )

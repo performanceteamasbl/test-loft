@@ -25,7 +25,12 @@ export default function Home() {
     if (trigger.type === 'submit') return
     if (trigger.closest('form')) return
 
-    window.dispatchEvent(new Event('open-interest-form-popup'))
+    const sourceText = trigger.dataset.popupTitle || trigger.textContent?.trim() || ''
+    window.dispatchEvent(
+      new CustomEvent('open-interest-form-popup', {
+        detail: { sourceText },
+      })
+    )
   }, [])
 
   return (
