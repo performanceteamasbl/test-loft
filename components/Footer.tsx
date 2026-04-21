@@ -91,7 +91,7 @@ export default function Footer() {
       </div>
 
       {/* Decorative Top Border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#AE8F56] to-transparent"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#AE8F56] to-transparent text-transparent">:)</div>
     </footer>
   )
 }
