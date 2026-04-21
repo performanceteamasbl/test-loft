@@ -1,91 +1,66 @@
-type GoogleLeadCreatedInput = {
-  eventId: string
-  contentName: string
-  value: number
-  currency: string
-  project: string
-  configuration: string
-  budget: string
-  purpose: string
-  source: string
-  pageUrl: string
-  referrer: string
-  utm_source: string
-  utm_medium: string
-  utm_campaign: string
-  utm_content: string
-  utm_term: string
+type GoogleGenerateLeadInput = {
+  email?: string
+  phoneNumber?: string
+  firstName?: string
+  lastName?: string
+  street?: string
+  city?: string
+  region?: string
+  postalCode?: string
+  country?: string
 }
-
-type GoogleEventParams = Record<string, string | number>
 
 declare global {
   interface Window {
-    gtag?: (...args: unknown[]) => void
+    dataLayer?: unknown[]
   }
 }
 
-const GOOGLE_ADS_ID = 'AW-798121015'
-const DEFAULT_GOOGLE_ADS_LEAD_CONVERSION_LABEL = 'dMvGCNyeqp8cELe4yfwC'
-const GOOGLE_ADS_LEAD_CONVERSION_LABEL =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_LEAD_CONVERSION_LABEL?.trim() ||
-  DEFAULT_GOOGLE_ADS_LEAD_CONVERSION_LABEL
-
 const trimValue = (value?: string): string => (value || '').trim()
 
-const compactParams = (params: GoogleEventParams): GoogleEventParams =>
+const compactStringRecord = (record: Record<string, string | undefined>): Record<string, string> =>
   Object.fromEntries(
-    Object.entries(params).filter(([, value]) => {
-      if (typeof value === 'number') return Number.isFinite(value)
-      return Boolean(trimValue(value))
-    })
+    Object.entries(record)
+      .map(([key, value]) => [key, trimValue(value)] as const)
+      .filter(([, value]) => Boolean(value))
   )
 
-export const trackGoogleLeadCreated = ({
-  eventId,
-  contentName,
-  value,
-  currency,
-  project,
-  configuration,
-  budget,
-  purpose,
-  source,
-  pageUrl,
-  referrer,
-  utm_source,
-  utm_medium,
-  utm_campaign,
-  utm_content,
-  utm_term,
-}: GoogleLeadCreatedInput) => {
-  if (typeof window === 'undefined' || typeof window.gtag !== 'function') return
+export const pushGoogleGenerateLead = ({
+  email,
+  phoneNumber,
+  firstName,
+  lastName,
+  street,
+  city,
+  region,
+  postalCode,
+  country,
+}: GoogleGenerateLeadInput) => {
+  if (typeof window === 'undefined') return
 
-  const eventParams = compactParams({
-    event_id: eventId,
-    event_category: 'lead',
-    event_label: 'LEAD_CREATED',
-    lead_event_name: 'LEAD_CREATED',
-    content_name: contentName,
-    value,
-    currency,
-    project,
-    configuration,
-    budget,
-    purpose,
-    lead_source: source,
-    page_location: pageUrl,
-    page_referrer: referrer,
-    utm_source,
-    utm_medium,
-    utm_campaign,
-    utm_content,
-    utm_term,
+  const userData: Record<string, string | Record<string, string>> = compactStringRecord({
+    email,
+    phone_number: phoneNumber,
+    first_name: firstName,
+    last_name: lastName,
   })
 
-  window.gtag('event', 'LEAD_CREATED', {
-    send_to: `${GOOGLE_ADS_ID}/${GOOGLE_ADS_LEAD_CONVERSION_LABEL}`,
-    transaction_id: eventId,
-    ...eventParams,
+  const address = compactStringRecord({
+    street,
+    city,
+    region,
+    postal_code: postalCode,
+    country,
+  })
+
+  if (Object.keys(address).length > 0) {
+    userData.address = address
+  }
+
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({
+    event: 'generate_lead',
+    user_data: userData,
   })
 }
+

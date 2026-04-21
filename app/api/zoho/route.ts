@@ -57,7 +57,7 @@ async function createZohoLead(accessToken: string, formData: ZohoFormData) {
         Company: ZOHO_LEAD_COMPANY,
         Last_Name: formData.name || 'Unknown',
         Email: formData.email,
-        Phone: formData.phone,
+        Mobile: formData.phone,
         Description: `Preferred contact time: ${formData.preferredTime || 'Anytime'}`,
         Lead_Source: ZOHO_LEAD_SOURCE,
       },

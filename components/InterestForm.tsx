@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MotionButton } from '@/components/ui/hover-effects'
 import { trackEvent } from '@/lib/fpixel'
-import { trackGoogleLeadCreated } from '@/lib/google-ads'
+import { pushGoogleGenerateLead } from '@/lib/google-ads'
 import { buildMetaLeadPayload, getMetaBrowserTracking } from '@/lib/meta-tracking'
 
 type FormState = {
@@ -467,23 +467,14 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
 
       trackEvent('LEAD_CREATED', leadEventParams, eventId)
 
-      trackGoogleLeadCreated({
-        eventId,
-        contentName: leadEventParams.content_name,
-        value: leadEventParams.value,
-        currency: leadEventParams.currency,
-        project: leadEventParams.project,
-        configuration: leadEventParams.configuration,
-        budget: leadEventParams.budget,
-        purpose: leadEventParams.purpose,
-        source: leadEventParams.source,
-        pageUrl: leadEventParams.page_url,
-        referrer: leadEventParams.referrer,
-        utm_source: leadEventParams.utm_source,
-        utm_medium: leadEventParams.utm_medium,
-        utm_campaign: leadEventParams.utm_campaign,
-        utm_content: leadEventParams.utm_content,
-        utm_term: leadEventParams.utm_term,
+      pushGoogleGenerateLead({
+        phoneNumber: phone,
+        firstName: first_name,
+        lastName: last_name,
+        city: geoData.city,
+        region: geoData.state,
+        postalCode: geoData.zip,
+        country: selectedCountryShort,
       })
 
       void fetch('/api/meta-lead', {
