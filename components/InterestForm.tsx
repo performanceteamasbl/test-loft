@@ -1,16 +1,15 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { MotionButton } from '@/components/ui/hover-effects'
 import { trackEvent } from '@/lib/fpixel'
 
 type FormState = {
   name: string
   phone: string
-  email: string
   budget: string
   purpose: 'Self Use' | 'Investment'
-  message: string
 }
 
 type TrackingState = {
@@ -98,15 +97,15 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
   const [otpErrorMessage, setOtpErrorMessage] = useState('')
   const [otpSuccessMessage, setOtpSuccessMessage] = useState('')
   const [otpCode, setOtpCode] = useState('')
+  const [otpStepActive, setOtpStepActive] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   const [otpVerified, setOtpVerified] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
   const [formData, setFormData] = useState<FormState>({
     name: '',
     phone: '',
-    email: '',
     budget: '',
     purpose: 'Self Use',
-    message: '',
   })
   const [trackingData, setTrackingData] = useState<TrackingState>({
     utm_source: '',
@@ -257,13 +256,25 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     }
   }, [countryOptions, selectedCountryShort, selectedCountryCode])
 
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+
+    const timer = window.setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+
+    return () => window.clearInterval(timer)
+  }, [resendCooldown])
+
   const effectiveCountryCode = selectedCountryCode || geoData.country_code || DEFAULT_COUNTRY_CODE
   const phoneWithCountryCode = formatPhoneWithCountryCode(formData.phone, effectiveCountryCode)
 
   const resetOtpState = () => {
+    setOtpStepActive(false)
     setOtpSent(false)
     setOtpVerified(false)
     setOtpCode('')
+    setResendCooldown(0)
     setOtpErrorMessage('')
     setOtpSuccessMessage('')
   }
@@ -278,7 +289,7 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSendOtp = async () => {
+  const requestOtp = async () => {
     if (!formData.phone.trim()) {
       setOtpErrorMessage('Enter phone number before requesting OTP.')
       setOtpSuccessMessage('')
@@ -308,12 +319,29 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
       }
 
       setOtpSent(true)
+      setOtpStepActive(true)
+      setResendCooldown(30)
       setOtpSuccessMessage('OTP sent successfully.')
     } catch (error) {
       setOtpErrorMessage((error as Error).message)
     } finally {
       setIsSendingOtp(false)
     }
+  }
+
+  const handleStartOtpFlow = async () => {
+    if (!formData.name.trim() || !formData.phone.trim() || !formData.budget.trim()) {
+      setOtpErrorMessage('Please complete required details before requesting OTP.')
+      setOtpSuccessMessage('')
+      return
+    }
+
+    await requestOtp()
+  }
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0) return
+    await requestOtp()
   }
 
   const handleVerifyOtp = async () => {
@@ -387,7 +415,6 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: formData.email.trim(),
           eventId,
         }),
       }).catch((metaError) => {
@@ -399,12 +426,10 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
         first_name,
         last_name,
         phone,
-        email: formData.email.trim(),
         project: PROJECT,
         configuration: CONFIGURATION,
         budget: formData.budget,
         purpose: formData.purpose,
-        message: formData.message,
         utm_source: trackingData.utm_source,
         utm_medium: trackingData.utm_medium,
         utm_campaign: trackingData.utm_campaign,
@@ -437,10 +462,8 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
       setFormData({
         name: '',
         phone: '',
-        email: '',
         budget: '',
         purpose: 'Self Use',
-        message: '',
       })
       resetOtpState()
     } catch (error) {
@@ -475,187 +498,191 @@ export default function InterestForm({ asPopup = false }: InterestFormProps) {
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            {/* Name */}
-            <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
-                placeholder="Your name"
-              />
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
-                Phone Number
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
-                <select
-                  name="country_code"
-                  value={selectedCountryShort}
-                  onChange={(e) => {
-                    const selected = countryOptions.find((option) => option.short === e.target.value)
-                    setSelectedCountryShort(e.target.value)
-                    if (selected) {
-                      setSelectedCountryCode(selected.dialCode)
-                    }
-                    resetOtpState()
-                  }}
-                  className="w-full px-3 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
-                  aria-label="Country code"
+            <AnimatePresence mode="wait" initial={false}>
+              {!otpStepActive ? (
+                <motion.div
+                  key="details-step"
+                  initial={{ x: 0, opacity: 1 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -60, opacity: 0 }}
+                  transition={{ duration: 0.35, ease: 'easeInOut' }}
+                  className="space-y-6"
                 >
-                  {[
-                    ...countryOptions,
-                    ...(countryOptions.some((option) => option.short === selectedCountryShort)
-                      ? []
-                      : [{ name: 'Detected', short: selectedCountryShort || 'IN', dialCode: selectedCountryCode }]),
-                  ].map((option) => (
-                      <option key={`${option.short}-${option.dialCode}`} value={option.short}>
-                        {option.dialCode}
-                      </option>
-                    ))}
-                </select>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
-                  placeholder="9876543210"
-                />
-              </div>
-              <div className="mt-3 flex flex-col gap-3">
-                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={otpCode}
-                    onChange={(e) => {
-                      setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 8))
-                      setOtpErrorMessage('')
-                    }}
-                    disabled={!otpSent || otpVerified}
-                    className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF] disabled:opacity-60"
-                    placeholder={otpSent ? 'Enter OTP' : 'Send OTP to continue'}
-                    aria-label="OTP code"
-                  />
-                  <div className="flex gap-2">
-                    <MotionButton
-                      type="button"
-                      data-popup-ignore="true"
-                      onClick={handleSendOtp}
-                      disabled={isSendingOtp || !formData.phone.trim()}
-                      className="px-4 py-3 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {isSendingOtp ? 'Sending...' : otpSent ? 'Resend OTP' : 'Send OTP'}
-                    </MotionButton>
-                    <MotionButton
-                      type="button"
-                      data-popup-ignore="true"
-                      onClick={handleVerifyOtp}
-                      disabled={isVerifyingOtp || !otpSent || otpVerified || !otpCode.trim()}
-                      className="px-4 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {isVerifyingOtp ? 'Verifying...' : otpVerified ? 'Verified' : 'Verify OTP'}
-                    </MotionButton>
+                  {/* Name */}
+                  <div>
+                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                      placeholder="Your name"
+                    />
                   </div>
-                </div>
 
-                {otpSuccessMessage ? (
-                  <p className="text-sm text-green-700">{otpSuccessMessage}</p>
-                ) : null}
-                {otpErrorMessage ? (
-                  <p className="text-sm text-red-600">{otpErrorMessage}</p>
-                ) : null}
-              </div>
-            </div>
+                  {/* Phone */}
+                  <div>
+                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                      Phone Number
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
+                      <select
+                        name="country_code"
+                        value={selectedCountryShort}
+                        onChange={(e) => {
+                          const selected = countryOptions.find((option) => option.short === e.target.value)
+                          setSelectedCountryShort(e.target.value)
+                          if (selected) {
+                            setSelectedCountryCode(selected.dialCode)
+                          }
+                          resetOtpState()
+                        }}
+                        className="w-full px-3 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
+                        aria-label="Country code"
+                      >
+                        {[
+                          ...countryOptions,
+                          ...(countryOptions.some((option) => option.short === selectedCountryShort)
+                            ? []
+                            : [{ name: 'Detected', short: selectedCountryShort || 'IN', dialCode: selectedCountryCode }]),
+                        ].map((option) => (
+                            <option key={`${option.short}-${option.dialCode}`} value={option.short}>
+                              {option.dialCode}
+                            </option>
+                          ))}
+                      </select>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                        placeholder="9876543210"
+                      />
+                    </div>
+                  </div>
 
-            {/* Email */}
-            <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
-                placeholder="your@email.com"
-              />
-            </div>
+                  {/* Budget */}
+                  <div>
+                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                      Budget
+                    </label>
+                    <select
+                      name="budget"
+                      value={formData.budget}
+                      onChange={handleChange}
+                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
+                    >
+                      <option value="">Select budget</option>
+                      <option value="Below 1.5 Cr">Below 1.5 Cr</option>
+                      <option value="1.5 Cr - 2 Cr">1.5 Cr - 2 Cr</option>
+                      <option value="2 Cr - 2.5 Cr">2 Cr - 2.5 Cr</option>
+                      <option value="Above 2.5 Cr">Above 2.5 Cr</option>
+                    </select>
+                  </div>
 
-            {/* Budget */}
-            <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
-                Budget
-              </label>
-              <select
-                name="budget"
-                value={formData.budget}
-                onChange={handleChange}
-                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
-              >
-                <option value="">Select budget</option>
-                <option value="Below 1.5 Cr">Below 1.5 Cr</option>
-                <option value="1.5 Cr - 2 Cr">1.5 Cr - 2 Cr</option>
-                <option value="2 Cr - 2.5 Cr">2 Cr - 2.5 Cr</option>
-                <option value="Above 2.5 Cr">Above 2.5 Cr</option>
-              </select>
-            </div>
+                  {/* Purpose */}
+                  <div>
+                    <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
+                      Purpose
+                    </label>
+                    <select
+                      name="purpose"
+                      value={formData.purpose}
+                      onChange={handleChange}
+                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
+                    >
+                      <option value="Self Use">Self Use</option>
+                      <option value="Investment">Investment</option>
+                    </select>
+                  </div>
 
-            {/* Purpose */}
-            <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
-                Purpose
-              </label>
-              <select
-                name="purpose"
-                value={formData.purpose}
-                onChange={handleChange}
-                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56]"
-              >
-                <option value="Self Use">Self Use</option>
-                <option value="Investment">Investment</option>
-              </select>
-            </div>
+                  <MotionButton
+                    type="button"
+                    data-popup-ignore="true"
+                    onClick={handleStartOtpFlow}
+                    disabled={isSendingOtp}
+                    className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isSendingOtp ? 'Sending OTP...' : 'Get OTP'}
+                  </MotionButton>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="otp-step"
+                  initial={{ x: 60, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -60, opacity: 0 }}
+                  transition={{ duration: 0.35, ease: 'easeInOut' }}
+                  className="space-y-4"
+                >
+                  <p className="text-sm text-[#000000] font-lato">
+                    OTP sent to {phoneWithCountryCode}. Verify to enable submit.
+                  </p>
 
-            {/* Message */}
-            <div>
-              <label className="block font-montserrat text-sm uppercase tracking-wide text-[#9D5088] mb-2">
-                Message
-              </label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                rows={4}
-                className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF]"
-                placeholder="Tell us what you are looking for"
-              />
-            </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={otpCode}
+                      onChange={(e) => {
+                        setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 8))
+                        setOtpErrorMessage('')
+                      }}
+                      disabled={!otpSent || otpVerified}
+                      className="w-full px-6 py-3 bg-white border-2 border-[#9D5088] text-[#9D5088] focus:outline-none focus:border-[#AE8F56] placeholder-[#E5E3DF] disabled:opacity-60"
+                      placeholder={otpSent ? 'Enter OTP' : 'Send OTP to continue'}
+                      aria-label="OTP code"
+                    />
+                    <div className="flex gap-2">
+                      <MotionButton
+                        type="button"
+                        data-popup-ignore="true"
+                        onClick={handleResendOtp}
+                        disabled={isSendingOtp || resendCooldown > 0}
+                        className="px-4 py-3 bg-[#9D5088] text-[#FFFFFF] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : isSendingOtp ? 'Sending...' : 'Resend OTP'}
+                      </MotionButton>
+                      <MotionButton
+                        type="button"
+                        data-popup-ignore="true"
+                        onClick={handleVerifyOtp}
+                        disabled={isVerifyingOtp || !otpSent || otpVerified || !otpCode.trim()}
+                        className="px-4 py-3 border-2 border-[#AE8F56] text-[#AE8F56] font-montserrat text-xs sm:text-sm uppercase tracking-wide hover:bg-[#AE8F56]/10 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {isVerifyingOtp ? 'Verifying...' : otpVerified ? 'Verified' : 'Verify OTP'}
+                      </MotionButton>
+                    </div>
+                  </div>
+
+                  <MotionButton
+                    type="submit"
+                    disabled={!otpVerified || isLoading}
+                    className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isLoading ? 'Sending...' : 'Submit'}
+                  </MotionButton>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {errorMessage ? (
               <p className="text-center text-sm text-red-600">{errorMessage}</p>
             ) : null}
 
-            {/* Submit Button */}
-            <MotionButton
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-4 bg-[#9D5088] text-[#FFFFFF] font-montserrat uppercase tracking-wide hover:bg-[#FDE68A] transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {isLoading ? 'Sending...' : 'Request a Callback'}
-            </MotionButton>
+            {otpSuccessMessage ? (
+              <p className="text-sm text-green-700">{otpSuccessMessage}</p>
+            ) : null}
+            {otpErrorMessage ? (
+              <p className="text-sm text-red-600">{otpErrorMessage}</p>
+            ) : null}
 
             {/* Reassurance Text */}
             <p className="text-center text-[#000000] font-lato text-sm">
